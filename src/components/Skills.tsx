@@ -34,7 +34,7 @@ const GROUPS: SkillGroup[] = [
   {
     label: "Languages",
     icon: Code2,
-    items: ["Python", "Java", "TypeScript", "C", "C++", "SQL"],
+    items: ["Python", "Java", "C", "C++", "SQL"],
     variant: "light",
     span: "sm:col-span-1 lg:col-span-2",
   },

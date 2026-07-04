@@ -16,19 +16,19 @@ const ITEMS: Achievement[] = [
   {
     icon: ScrollText,
     kicker: "Publication",
-    title: "IEEE-format conference paper",
+    title: "Research paper",
     body: "Authored a paper on the SafeCity Connect civic-safety architecture.",
   },
   {
     icon: Trophy,
     kicker: "Hackathons",
-    title: "Orchestrate · OpenEnv · HackAgentAIx",
-    body: "HackerRank Orchestrate, Meta PyTorch OpenEnv, and HackAgentAIx (University of Essex).",
+    title: "Orchestrate · HACKSPARK · HackAgentAIx",
+    body: "HackerRank Orchestrate, Aurora Tech Fest Hackathon- HACKSPARK and HackAgentAIx (University of Essex).",
   },
   {
     icon: Flag,
     kicker: "CTF / Security",
-    title: "Capture-the-Flag competitions",
+    title: "Antraveda – Capture The Flag (CTF)",
     body: "Cryptography, digital forensics, and web exploitation.",
   },
 ];
