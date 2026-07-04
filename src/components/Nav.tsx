@@ -14,6 +14,7 @@ const LINKS = [
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("");
 
   /* Thin amber page-progress bar along the very top edge. */
   const { scrollYProgress } = useScroll();
@@ -24,6 +25,27 @@ export default function Nav() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* Scrollspy: light up the link whose section crosses the viewport middle. */
+  useEffect(() => {
+    const ids = ["top", ...LINKS.map((l) => l.href.slice(1))];
+    const sections = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          setActive(entry.target.id === "top" ? "" : `#${entry.target.id}`);
+        }
+      },
+      { rootMargin: "-40% 0px -55% 0px" },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
   const solid = scrolled || open;
@@ -50,19 +72,29 @@ export default function Nav() {
 
         {/* Desktop links */}
         <ul className="hidden items-center gap-7 md:flex">
-          {LINKS.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className="group font-mono text-[13px] text-mute transition-colors hover:text-ink"
-              >
-                <span className="mr-1.5 text-accent/70 transition-colors group-hover:text-accent">
-                  {link.index}
-                </span>
-                {link.label}
-              </a>
-            </li>
-          ))}
+          {LINKS.map((link) => {
+            const isActive = active === link.href;
+            return (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  aria-current={isActive ? "true" : undefined}
+                  className={`group font-mono text-[13px] transition-colors hover:text-ink ${
+                    isActive ? "text-ink" : "text-mute"
+                  }`}
+                >
+                  <span
+                    className={`mr-1.5 transition-colors group-hover:text-accent ${
+                      isActive ? "text-accent" : "text-accent/70"
+                    }`}
+                  >
+                    {link.index}
+                  </span>
+                  {link.label}
+                </a>
+              </li>
+            );
+          })}
           <li>
             <a
               href="/resume.pdf"
@@ -105,7 +137,10 @@ export default function Nav() {
                   <a
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 py-3 font-mono text-sm text-mute transition-colors hover:text-ink"
+                    aria-current={active === link.href ? "true" : undefined}
+                    className={`flex items-center gap-3 py-3 font-mono text-sm transition-colors hover:text-ink ${
+                      active === link.href ? "text-ink" : "text-mute"
+                    }`}
                   >
                     <span className="text-accent/80">{link.index}</span>
                     {link.label}

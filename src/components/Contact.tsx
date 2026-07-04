@@ -1,10 +1,32 @@
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
-import { FileDown, Github, Linkedin, Mail } from "lucide-react";
+import { Check, Copy, FileDown, Github, Linkedin, Mail } from "lucide-react";
 import Section from "./Section";
 import Magnetic from "./Magnetic";
 import { scaleIn } from "../lib/motion";
 
+const EMAIL = "shaik.luqman28@gmail.com";
+/* Gmail compose opens reliably in any browser — mailto: silently no-ops when
+   the visitor has no desktop mail client configured. */
+const GMAIL_COMPOSE = `https://mail.google.com/mail/?view=cm&fs=1&to=${EMAIL}`;
+
 export default function Contact() {
+  const [copied, setCopied] = useState(false);
+  const resetTimer = useRef<number | undefined>(undefined);
+
+  useEffect(() => () => window.clearTimeout(resetTimer.current), []);
+
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setCopied(true);
+      window.clearTimeout(resetTimer.current);
+      resetTimer.current = window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* Clipboard unavailable (permissions / non-secure context) — no-op. */
+    }
+  }
+
   return (
     <Section id="contact" index="05" title="Contact">
       <motion.div
@@ -30,11 +52,33 @@ export default function Contact() {
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Magnetic>
-              <a href="mailto:shaik.luqman28@gmail.com" className="btn btn-primary h-12 px-7">
+              <a
+                href={GMAIL_COMPOSE}
+                target="_blank"
+                rel="noopener"
+                className="btn btn-primary h-12 px-7"
+              >
                 <Mail size={16} aria-hidden />
-                shaik.luqman28@gmail.com
+                {EMAIL}
               </a>
             </Magnetic>
+            <Magnetic>
+              <button
+                type="button"
+                onClick={copyEmail}
+                aria-label={copied ? "Email address copied" : "Copy email address"}
+                className={`btn h-12 w-12 border px-0 transition-colors ${
+                  copied
+                    ? "border-brand text-brand"
+                    : "border-white/20 text-paper hover:border-brand hover:text-brand"
+                }`}
+              >
+                {copied ? <Check size={17} aria-hidden /> : <Copy size={16} aria-hidden />}
+              </button>
+            </Magnetic>
+            <span className="sr-only" aria-live="polite">
+              {copied ? "Email address copied to clipboard" : ""}
+            </span>
           </div>
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3">

@@ -1,9 +1,13 @@
-import { FileDown, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowUp, FileDown, Github, Linkedin, Mail } from "lucide-react";
 
 const SOCIALS = [
   { label: "GitHub", href: "https://github.com/LuckyLuck786", Icon: Github },
   { label: "LinkedIn", href: "https://linkedin.com/in/luqman-shaik", Icon: Linkedin },
-  { label: "Email", href: "mailto:shaik.luqman28@gmail.com", Icon: Mail },
+  {
+    label: "Email",
+    href: "https://mail.google.com/mail/?view=cm&fs=1&to=shaik.luqman28@gmail.com",
+    Icon: Mail,
+  },
   { label: "Résumé", href: "/resume.pdf", Icon: FileDown },
 ];
 
@@ -15,18 +19,35 @@ export default function Footer() {
           © {new Date().getFullYear()} Shaik Luqman — Bengaluru, India
         </p>
 
-        <div className="flex items-center gap-1">
-          {SOCIALS.map(({ label, href, Icon }) => (
-            <a
-              key={label}
-              href={href}
-              aria-label={label}
-              {...(href.startsWith("mailto:") ? {} : { target: "_blank", rel: "noopener" })}
-              className="p-2 text-dim transition-colors hover:text-accent"
-            >
-              <Icon size={17} strokeWidth={1.75} />
-            </a>
-          ))}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            {SOCIALS.map(({ label, href, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                aria-label={label}
+                target="_blank"
+                rel="noopener"
+                className="p-2 text-dim transition-colors hover:text-accent"
+              >
+                <Icon size={17} strokeWidth={1.75} />
+              </a>
+            ))}
+          </div>
+
+          <span aria-hidden className="h-4 w-px bg-line-strong" />
+
+          <a
+            href="#top"
+            className="group flex items-center gap-1.5 font-mono text-xs text-dim transition-colors hover:text-accent"
+          >
+            Back to top
+            <ArrowUp
+              size={13}
+              aria-hidden
+              className="transition-transform duration-300 group-hover:-translate-y-0.5"
+            />
+          </a>
         </div>
       </div>
     </footer>

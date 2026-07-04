@@ -10,7 +10,7 @@ import {
 } from "motion/react";
 import { ArrowDown, ArrowUpRight, FileDown, Github, Linkedin, MapPin } from "lucide-react";
 import Magnetic from "./Magnetic";
-import { fadeRise, maskRise, stagger, staggerFast } from "../lib/motion";
+import { EASE, fadeRise, maskRise, stagger, staggerFast } from "../lib/motion";
 
 const HEADLINE = "I ship production-grade systems, not prototypes.";
 
@@ -94,24 +94,38 @@ export default function Hero() {
         className="container-page pb-24 pt-28"
       >
         <motion.div variants={stagger} initial="hidden" animate="visible">
-          {/* Eyebrow: name + location */}
+          {/* Eyebrow: location tag */}
           <motion.div
             variants={fadeRise}
-            className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[13px]"
+            className="flex items-center gap-1.5 font-mono text-[13px] text-mute"
           >
-            <span className="uppercase tracking-[0.22em] text-accent">Shaik Luqman</span>
-            <span aria-hidden className="h-px w-8 bg-line-strong" />
-            <span className="flex items-center gap-1.5 text-mute">
-              <MapPin size={13} strokeWidth={1.75} aria-hidden />
-              Bengaluru, India
-            </span>
+            <MapPin size={13} strokeWidth={1.75} aria-hidden />
+            Bengaluru, India
           </motion.div>
+
+          {/* Name, large and marker-highlighted so it leads the page */}
+          <motion.p
+            variants={fadeRise}
+            className="mt-7 text-[2rem] font-bold tracking-[-0.02em] sm:text-4xl md:text-[2.75rem]"
+          >
+            <span className="relative inline-block px-1.5">
+              <motion.span
+                aria-hidden
+                style={{ originX: 0 }}
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 1.1, duration: 0.7, ease: EASE }}
+                className="absolute inset-x-0 bottom-[0.02em] top-[0.16em] -skew-x-6 rounded-sm bg-brand/30"
+              />
+              <span className="relative">Shaik Luqman</span>
+            </span>
+          </motion.p>
 
           {/* Word-by-word masked headline reveal */}
           <motion.h1
             variants={staggerFast}
             aria-label={HEADLINE}
-            className="mt-8 max-w-5xl text-[2.75rem] font-semibold leading-[1.04] tracking-[-0.035em] sm:text-6xl md:text-7xl lg:text-[5.25rem]"
+            className="mt-5 max-w-5xl text-[2.75rem] font-semibold leading-[1.04] tracking-[-0.035em] sm:text-6xl md:text-7xl lg:text-[5.25rem]"
           >
             {WORDS.map((word, i) => (
               <span
