@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "motion/react";
-import { ExternalLink, Github, Maximize2 } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Github, Maximize2 } from "lucide-react";
 import { scaleIn, VIEWPORT } from "../lib/motion";
 import { trackSpot } from "../lib/spotlight";
 
@@ -8,6 +9,8 @@ export type Project = {
   /** Mono index shown on the card, e.g. "01". */
   index: string;
   title: string;
+  /** URL slug for the dedicated case-study page (/projects/<slug>). */
+  slug: string;
   /** Short mono descriptor next to the index. */
   kicker: string;
   summary: string;
@@ -22,6 +25,10 @@ export type Project = {
   flip?: boolean;
   /** Bespoke decorative visual rendered beside the copy. */
   art: ReactNode;
+  /** Pinned-story chapters shown on the case-study page. */
+  chapters?: { kicker: string; title: string; body: string }[];
+  /** Architecture flow node labels for the case-study diagram. */
+  flow?: string[];
 };
 
 export default function ProjectCard({
@@ -110,6 +117,13 @@ export default function ProjectCard({
           </ul>
 
           <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              to={`/projects/${project.slug}`}
+              className={`btn h-10 px-5 text-[13px] ${s.button}`}
+            >
+              Case study
+              <ArrowUpRight size={15} aria-hidden />
+            </Link>
             <a
               href={project.github}
               target="_blank"

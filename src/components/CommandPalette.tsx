@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowUp,
   Copy,
   FileDown,
+  FolderOpen,
   Github,
   Hash,
   Linkedin,
@@ -14,6 +16,7 @@ import {
 } from "lucide-react";
 import { EASE } from "../lib/motion";
 import { lenisStart, lenisStop, scrollToId } from "./SmoothScroll";
+import { openResume } from "./ResumeModal";
 
 type Action = {
   id: string;
@@ -21,15 +24,36 @@ type Action = {
   hint: string;
   icon: LucideIcon;
   keywords?: string;
-  run: () => void;
+  /** Scroll to this home-page section (navigates home first if needed). */
+  sectionId?: string;
+  /** Navigate to this route. */
+  to?: string;
+  /** Arbitrary side effect. */
+  run?: () => void;
 };
 
 const ACTIONS: Action[] = [
-  { id: "about", label: "Go to About", hint: "01", icon: Hash, run: () => scrollToId("about") },
-  { id: "skills", label: "Go to Skills", hint: "02", icon: Hash, run: () => scrollToId("skills") },
-  { id: "projects", label: "Go to Projects", hint: "03", icon: Hash, keywords: "work metroflow suraksha", run: () => scrollToId("projects") },
-  { id: "achievements", label: "Go to Achievements", hint: "04", icon: Hash, keywords: "hackathon ctf paper", run: () => scrollToId("achievements") },
-  { id: "contact", label: "Go to Contact", hint: "05", icon: Hash, keywords: "email touch", run: () => scrollToId("contact") },
+  { id: "about", label: "Go to About", hint: "01", icon: Hash, sectionId: "about" },
+  { id: "skills", label: "Go to Skills", hint: "02", icon: Hash, sectionId: "skills" },
+  { id: "projects", label: "Go to Projects", hint: "03", icon: Hash, keywords: "work", sectionId: "projects" },
+  { id: "achievements", label: "Go to Achievements", hint: "04", icon: Hash, keywords: "hackathon ctf paper", sectionId: "achievements" },
+  { id: "contact", label: "Go to Contact", hint: "05", icon: Hash, keywords: "email touch", sectionId: "contact" },
+  {
+    id: "case-metroflow",
+    label: "Open MetroFlow case study",
+    hint: "↗",
+    icon: FolderOpen,
+    keywords: "transit bus project",
+    to: "/projects/metroflow",
+  },
+  {
+    id: "case-suraksha",
+    label: "Open Suraksha case study",
+    hint: "↗",
+    icon: FolderOpen,
+    keywords: "safety crime project",
+    to: "/projects/suraksha",
+  },
   {
     id: "email",
     label: "Write me an email",
@@ -63,25 +87,26 @@ const ACTIONS: Action[] = [
   },
   {
     id: "resume",
-    label: "Download résumé",
+    label: "View résumé",
     hint: "PDF",
     icon: FileDown,
-    keywords: "cv resume",
-    run: () => window.open("/resume.pdf", "_blank", "noopener"),
+    keywords: "cv resume download",
+    run: openResume,
   },
-  { id: "top", label: "Back to top", hint: "↑", icon: ArrowUp, run: () => scrollToId("top") },
+  { id: "top", label: "Back to top", hint: "↑", icon: ArrowUp, sectionId: "top" },
 ];
 
 /**
- * Linear-style ⌘K command palette: jump to sections, copy the email, open
- * links — all from the keyboard. Also opens via the nav's "⌘K" chip, which
- * dispatches a "cmdk:open" window event.
+ * Linear-style ⌘K command palette: jump to sections (from any page), open
+ * case studies, copy the email, view the résumé. Also opens via the nav's
+ * "⌘K" chip, which dispatches a "cmdk:open" window event.
  */
 export default function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIdx, setActiveIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -125,8 +150,17 @@ export default function CommandPalette() {
   useEffect(() => setActiveIdx(0), [query]);
 
   function runAction(action: Action) {
-    action.run();
     setOpen(false);
+    if (action.sectionId) {
+      /* On the home page, glide there; from a case study, navigate home
+         with a hash — Home scrolls once the wipe lifts. */
+      if (document.getElementById(action.sectionId)) scrollToId(action.sectionId);
+      else navigate(`/#${action.sectionId}`);
+    } else if (action.to) {
+      navigate(action.to);
+    } else {
+      action.run?.();
+    }
   }
 
   function onInputKeyDown(e: ReactKeyboardEvent<HTMLInputElement>) {

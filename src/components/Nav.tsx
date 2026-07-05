@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { EASE } from "../lib/motion";
+import { openResume } from "./ResumeModal";
 
 const LINKS = [
   { index: "01", label: "About", href: "#about" },
@@ -106,14 +107,13 @@ export default function Nav() {
             </button>
           </li>
           <li>
-            <a
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener"
+            <button
+              type="button"
+              onClick={openResume}
               className="btn btn-dark h-9 px-5 font-mono text-[13px]"
             >
               Résumé
-            </a>
+            </button>
           </li>
         </ul>
 
@@ -158,16 +158,17 @@ export default function Nav() {
                 </li>
               ))}
               <li>
-                <a
-                  href="/resume.pdf"
-                  target="_blank"
-                  rel="noopener"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 py-3 font-mono text-sm text-mute transition-colors hover:text-ink"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    openResume();
+                  }}
+                  className="flex w-full items-center gap-3 py-3 font-mono text-sm text-mute transition-colors hover:text-ink"
                 >
                   <span className="text-accent/80">↗</span>
                   Résumé
-                </a>
+                </button>
               </li>
             </ul>
           </motion.div>

@@ -1,0 +1,45 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Social share card source. The 1200x630 card lives in the vertical
+       center band (y 285 to 915) of this square canvas so QuickLook renders
+       it at exact scale. Regenerate the PNG with:
+       qlmanage -t -s 1200 -o /tmp scripts/og.svg
+       sips -c 630 1200 /tmp/og.svg.png [dash][dash]out public/og.png -->
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="24%" r="60%">
+      <stop offset="0%" stop-color="#f5a623" stop-opacity="0.20"/>
+      <stop offset="55%" stop-color="#f5a623" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#f5a623" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="1.2" cy="1.2" r="1.2" fill="#26262e"/>
+    </pattern>
+  </defs>
+
+  <!-- Base fills the whole square so crop edges are seamless -->
+  <rect width="1200" height="1200" fill="#101013"/>
+  <rect width="1200" height="1200" fill="url(#dots)"/>
+  <rect width="1200" height="1200" fill="url(#glow)"/>
+
+  <!-- Card band: y 285–915 -->
+  <!-- Amber top hairline -->
+  <rect x="0" y="285" width="1200" height="6" fill="#f5a623"/>
+
+  <!-- Kicker -->
+  <text x="96" y="465" font-family="Menlo, monospace" font-size="22" letter-spacing="8" fill="#f5a623">PORTFOLIO — BENGALURU, INDIA</text>
+
+  <!-- Name -->
+  <text x="90" y="575" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="104" font-weight="bold" letter-spacing="-3" fill="#f5f5f2">Shaik Luqman</text>
+
+  <!-- Headline -->
+  <text x="94" y="653" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="42" font-weight="500" letter-spacing="-1" fill="#a6a6af">I ship production-grade systems,</text>
+  <text x="94" y="709" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="42" font-weight="500" letter-spacing="-1" fill="#a6a6af">not prototypes<tspan fill="#f5a623">.</tspan></text>
+
+  <!-- Divider -->
+  <rect x="96" y="771" width="64" height="2" fill="#2c2c33"/>
+
+  <!-- Tags -->
+  <text x="96" y="825" font-family="Menlo, monospace" font-size="19" letter-spacing="2" fill="#6e6e76">REACT 18 · DJANGO · SPRING BOOT · RAG · LLM ORCHESTRATION · JWT/RBAC</text>
+
+  <!-- Brand mark, bottom right of the band -->
+  <text x="1104" y="871" text-anchor="end" font-family="Menlo, monospace" font-size="20" fill="#f5a623">shaik.luqman_</text>
+</svg>

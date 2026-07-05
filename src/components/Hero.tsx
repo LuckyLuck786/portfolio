@@ -12,6 +12,7 @@ import { ArrowDown, ArrowUpRight, FileDown, Github, Linkedin, MapPin } from "luc
 import Magnetic from "./Magnetic";
 import ParticleField from "./ParticleField";
 import ScrambleText from "./ScrambleText";
+import { openResume } from "./ResumeModal";
 import { EASE, fadeRise, maskRise, stagger, staggerFast } from "../lib/motion";
 
 const HEADLINE = "I ship production-grade systems, not prototypes.";
@@ -195,10 +196,10 @@ export default function Hero({ introDone }: { introDone: boolean }) {
               </a>
             </Magnetic>
             <Magnetic>
-              <a href="/resume.pdf" target="_blank" rel="noopener" className="btn btn-outline">
+              <button type="button" onClick={openResume} className="btn btn-outline">
                 Résumé
                 <FileDown size={16} aria-hidden />
-              </a>
+              </button>
             </Magnetic>
             <Magnetic>
               <a

@@ -85,7 +85,19 @@ npx vercel --prod  # production deploy
         ├── ScrambleText.tsx    # terminal-style text decode
         ├── ProjectQuickLook.tsx# full-screen case overlay (layoutId morph)
         ├── Now.tsx             # slim status strip (personalize the items!)
-        └── Grain.tsx           # film-grain + vignette finish
+        ├── Grain.tsx           # film-grain + vignette finish
+        ├── PageShell.tsx       # route-transition wipe curtain
+        ├── ResumeModal.tsx     # inline résumé (PDF) viewer
+        └── Signature.tsx       # hand-signed footer draw-on
+    ├── pages/
+        ├── Home.tsx            # the single-page portfolio
+        └── CaseStudy.tsx       # /projects/:slug — pinned chapter storytelling
+
+Routes: `/` (home) and `/projects/metroflow`, `/projects/suraksha` (case
+studies). `vercel.json` rewrites all paths to `index.html` so deep links
+work on Vercel. The social share card lives at `public/og.png`
+(source: `scripts/og.svg`) — after deploying, set the absolute image URL
+in `index.html`.
 ```
 
 ## Design tokens

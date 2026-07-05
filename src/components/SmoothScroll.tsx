@@ -6,6 +6,10 @@ import Lenis from "lenis";
    scrolling, and so programmatic navigation shares the same easing. */
 let lenis: Lenis | null = null;
 
+export function getLenis() {
+  return lenis;
+}
+
 export function lenisStop() {
   lenis?.stop();
 }

@@ -1,4 +1,6 @@
 import { ArrowUp, FileDown, Github, Linkedin, Mail } from "lucide-react";
+import Signature from "./Signature";
+import { openResume } from "./ResumeModal";
 
 const SOCIALS = [
   { label: "GitHub", href: "https://github.com/LuckyLuck786", Icon: Github },
@@ -8,12 +10,16 @@ const SOCIALS = [
     href: "https://mail.google.com/mail/?view=cm&fs=1&to=shaik.luqman28@gmail.com",
     Icon: Mail,
   },
-  { label: "Résumé", href: "/resume.pdf", Icon: FileDown },
 ];
 
 export default function Footer() {
   return (
     <footer className="border-t border-line">
+      {/* Hand-signed ending */}
+      <div className="container-page flex justify-center pt-16">
+        <Signature />
+      </div>
+
       <div className="container-page flex flex-col items-center justify-between gap-4 py-10 sm:flex-row">
         <p className="font-mono text-xs text-dim">
           © {new Date().getFullYear()} Shaik Luqman — Bengaluru, India
@@ -33,6 +39,14 @@ export default function Footer() {
                 <Icon size={17} strokeWidth={1.75} />
               </a>
             ))}
+            <button
+              type="button"
+              onClick={openResume}
+              aria-label="Résumé"
+              className="p-2 text-dim transition-colors hover:text-accent"
+            >
+              <FileDown size={17} strokeWidth={1.75} />
+            </button>
           </div>
 
           <span aria-hidden className="h-4 w-px bg-line-strong" />

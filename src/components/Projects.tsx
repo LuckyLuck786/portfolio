@@ -170,10 +170,11 @@ function SurakshaArt() {
 
 /* ------------------------------------------------------------------------- */
 
-const PROJECTS: Project[] = [
+export const PROJECTS: Project[] = [
   {
     index: "01",
     title: "MetroFlow",
+    slug: "metroflow",
     kicker: "Live Transit & Logistics",
     summary: "Full-stack real-time bus-tracking and navigation platform for Bengaluru.",
     bullets: [
@@ -185,10 +186,34 @@ const PROJECTS: Project[] = [
     // TODO: Replace with the real MetroFlow repository URL.
     github: "https://github.com/LuckyLuck786",
     art: <MetroFlowArt />,
+    chapters: [
+      {
+        kicker: "Realtime layer",
+        title: "Live by default",
+        body: "Every bus on the map is tracked live, with rerouting pushed over Socket.IO — no refreshes. The map itself is real: actual Kanakapura Road route geometry rendered on interactive Leaflet maps.",
+      },
+      {
+        kicker: "Route intelligence",
+        title: "Optimized, not guessed",
+        body: "A Nearest-Neighbor TSP pass with Haversine distance calculations plans the routing, and a dedicated cost/savings analytics view shows what the optimization earns.",
+      },
+      {
+        kicker: "Two audiences",
+        title: "Admin and rider, cleanly split",
+        body: "Role-based admin and user interfaces sit on a Spring Boot (Java) service layer — one platform, two tailored experiences.",
+      },
+    ],
+    flow: [
+      "React 18 + Leaflet client",
+      "Socket.IO realtime channel",
+      "Spring Boot service layer",
+      "NN-TSP · Haversine optimizer",
+    ],
   },
   {
     index: "02",
     title: "Suraksha",
+    slug: "suraksha",
     kicker: "Civic Safety & Crime Reporting",
     summary:
       "Full-stack public-safety platform with AI-driven triage and geospatial hotspot analytics.",
@@ -203,6 +228,29 @@ const PROJECTS: Project[] = [
     dark: true,
     flip: true,
     art: <SurakshaArt />,
+    chapters: [
+      {
+        kicker: "AI triage",
+        title: "Classification that never hard-fails",
+        body: "Complaints are classified by a five-tier LLM fallback chain — Llama 3.3 70B, Qwen, Cerebras, Gemini, and an offline engine — so triage keeps working even when providers don't.",
+      },
+      {
+        kicker: "Geospatial analytics",
+        title: "Hotspots from raw reports",
+        body: "Haversine-based clustering turns individual reports into crime hotspots, surfaced on an interactive Leaflet dashboard with Chart.js analytics.",
+      },
+      {
+        kicker: "Security posture",
+        title: "Safe to speak up",
+        body: "JWT auth, role-based access control, and rate limiting protect the platform — and anonymous reporting protects the people using it.",
+      },
+    ],
+    flow: [
+      "React 18 client",
+      "Django REST API · JWT / RBAC",
+      "5-tier LLM fallback chain",
+      "Leaflet + Chart.js dashboards",
+    ],
   },
 ];
 

@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { Check, Copy, FileDown, Github, Linkedin, Mail } from "lucide-react";
 import Section from "./Section";
 import Magnetic from "./Magnetic";
+import { openResume } from "./ResumeModal";
 import { scaleIn } from "../lib/motion";
 import { trackSpot } from "../lib/spotlight";
 
@@ -107,15 +108,14 @@ export default function Contact() {
               </a>
             </Magnetic>
             <Magnetic>
-              <a
-                href="/resume.pdf"
-                target="_blank"
-                rel="noopener"
+              <button
+                type="button"
+                onClick={openResume}
                 className="btn border border-white/20 text-paper hover:border-brand hover:text-brand"
               >
                 <FileDown size={16} aria-hidden />
                 Résumé
-              </a>
+              </button>
             </Magnetic>
           </div>
         </div>
