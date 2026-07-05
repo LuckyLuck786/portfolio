@@ -4,6 +4,7 @@ import { Check, Copy, FileDown, Github, Linkedin, Mail } from "lucide-react";
 import Section from "./Section";
 import Magnetic from "./Magnetic";
 import { scaleIn } from "../lib/motion";
+import { trackSpot } from "../lib/spotlight";
 
 const EMAIL = "shaik.luqman28@gmail.com";
 /* Gmail compose opens reliably in any browser — mailto: silently no-ops when
@@ -31,7 +32,8 @@ export default function Contact() {
     <Section id="contact" index="05" title="Contact">
       <motion.div
         variants={scaleIn}
-        className="relative overflow-hidden rounded-[2rem] bg-noir px-6 py-16 text-center text-paper md:px-16 md:py-24"
+        onMouseMove={trackSpot}
+        className="spot relative overflow-hidden rounded-[2rem] bg-noir px-6 py-16 text-center text-paper md:px-16 md:py-24"
       >
         {/* Backdrop: faint grid + warm glow rising from the bottom */}
         <div aria-hidden className="absolute inset-0">

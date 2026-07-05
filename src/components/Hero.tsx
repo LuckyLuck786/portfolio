@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import type { PointerEvent, ReactNode } from "react";
 import {
   motion,
-  useMotionTemplate,
   useMotionValue,
   useReducedMotion,
   useScroll,
@@ -74,7 +73,7 @@ export default function Hero({ introDone }: { introDone: boolean }) {
         : hour < 17
           ? "Good afternoon"
           : "Good evening";
-  const time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const time = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true });
 
   /* Zoom-through exit: the hero scales toward the viewer and fades as you
      scroll, like flying through the text into the page. */
@@ -82,12 +81,12 @@ export default function Hero({ introDone }: { introDone: boolean }) {
   const fade = useTransform(scrollY, [0, 480], [1, 0]);
   const zoom = useTransform(scrollY, [0, 600], [1, 1.3]);
 
-  /* Cursor spotlight — a warm pool of light that follows the pointer. */
+  /* Cursor spotlight — a warm pool of light that follows the pointer.
+     A pre-painted gradient div moved with transforms: GPU-only, no repaints. */
   const mx = useMotionValue(-600);
   const my = useMotionValue(-600);
   const sx = useSpring(mx, { stiffness: 140, damping: 26 });
   const sy = useSpring(my, { stiffness: 140, damping: 26 });
-  const spotlight = useMotionTemplate`radial-gradient(560px circle at ${sx}px ${sy}px, rgba(245,166,35,0.1), transparent 70%)`;
 
   function onPointerMove(e: PointerEvent<HTMLElement>) {
     if (reduce) return;
@@ -104,11 +103,12 @@ export default function Hero({ introDone }: { introDone: boolean }) {
     >
       <Backdrop />
       {!reduce && (
-        <motion.div
-          aria-hidden
-          style={{ background: spotlight }}
-          className="pointer-events-none absolute inset-0 -z-10"
-        />
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <motion.div
+            style={{ x: sx, y: sy }}
+            className="-ml-[550px] -mt-[550px] h-[1100px] w-[1100px] rounded-full bg-[radial-gradient(circle,rgba(245,166,35,0.1),transparent_62%)]"
+          />
+        </div>
       )}
 
       <motion.div

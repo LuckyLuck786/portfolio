@@ -36,7 +36,8 @@ export default function SmoothScroll() {
 
     /* Native CSS smooth scrolling would fight Lenis' easing. */
     document.documentElement.style.scrollBehavior = "auto";
-    lenis = new Lenis({ lerp: 0.1 });
+    /* Higher lerp = tighter tracking of the wheel — smooth without lag. */
+    lenis = new Lenis({ lerp: 0.16 });
 
     let raf = requestAnimationFrame(function loop(time) {
       lenis?.raf(time);

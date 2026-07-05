@@ -3,7 +3,10 @@ import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/reac
 
 type Variant = "default" | "link" | "view";
 
-const SIZE: Record<Variant, number> = { default: 32, link: 48, view: 72 };
+/* The ring is a fixed 72px element scaled per variant — animating transform
+   only, never width/height, so the cursor costs nothing per frame. */
+const RING = 72;
+const SCALE: Record<Variant, number> = { default: 0.45, link: 0.66, view: 1 };
 
 /**
  * Custom cursor: a precise dot plus a trailing ring that morphs by context —
@@ -53,8 +56,6 @@ export default function CustomCursor() {
 
   if (!enabled) return null;
 
-  const size = SIZE[variant];
-
   return (
     <>
       {/* Center dot — blend-difference stays visible on light and dark. */}
@@ -64,28 +65,27 @@ export default function CustomCursor() {
         animate={{ opacity: visible && variant !== "view" ? 1 : 0 }}
         className="pointer-events-none fixed left-0 top-0 z-[125] -ml-[3px] -mt-[3px] h-1.5 w-1.5 rounded-full bg-white mix-blend-difference"
       />
-      {/* Trailing ring, morphing per hover target */}
+      {/* Trailing ring, morphing per hover target via scale only */}
       <motion.div
         aria-hidden
-        style={{ x: ringX, y: ringY }}
+        style={{ x: ringX, y: ringY, width: RING, height: RING, marginLeft: -RING / 2, marginTop: -RING / 2 }}
         animate={{
-          width: size,
-          height: size,
-          marginLeft: -size / 2,
-          marginTop: -size / 2,
+          scale: visible ? SCALE[variant] : 0.3,
           opacity: visible ? 1 : 0,
           backgroundColor: variant === "view" ? "#f5a623" : "rgba(245,166,35,0)",
         }}
-        transition={{ type: "spring", stiffness: 300, damping: 22 }}
+        transition={{ type: "spring", stiffness: 320, damping: 24 }}
         className={`pointer-events-none fixed left-0 top-0 z-[124] flex items-center justify-center rounded-full ${
-          variant === "view" ? "" : "border border-white mix-blend-difference"
+          variant === "view" ? "" : "border-[1.5px] border-white mix-blend-difference"
         }`}
       >
-        {variant === "view" && (
-          <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-ink">
-            View ↗
-          </span>
-        )}
+        <motion.span
+          animate={{ opacity: variant === "view" ? 1 : 0 }}
+          transition={{ duration: 0.15 }}
+          className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-ink"
+        >
+          View ↗
+        </motion.span>
       </motion.div>
     </>
   );

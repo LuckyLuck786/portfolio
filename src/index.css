@@ -96,9 +96,30 @@
     @apply rounded-3xl border border-line bg-card shadow-card;
   }
 
-  /* Amber border glow that follows the pointer — pair with trackSpot(). */
+  /* Amber glow that follows the pointer — pair with trackSpot().
+     ::before paints a soft interior pool of light (like the hero spotlight),
+     ::after paints the travelling border ring. */
   .spot {
     position: relative;
+  }
+
+  .spot::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      340px circle at var(--spot-x, -999px) var(--spot-y, -999px),
+      rgb(245 166 35 / 0.08),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.35s;
+  }
+
+  .spot:hover::before {
+    opacity: 1;
   }
 
   .spot::after {

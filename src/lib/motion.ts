@@ -7,7 +7,7 @@ export const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 export const stagger: Variants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.09, delayChildren: 0.05 },
+    transition: { staggerChildren: 0.07, delayChildren: 0.02 },
   },
 };
 
@@ -15,27 +15,27 @@ export const stagger: Variants = {
 export const staggerFast: Variants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.045, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.04, delayChildren: 0.08 },
   },
 };
 
 /** Standard reveal for headings, paragraphs, and small cards. */
 export const fadeRise: Variants = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: EASE },
+    transition: { duration: 0.55, ease: EASE },
   },
 };
 
 /** Tighter reveal for small elements (chips, list rows). */
 export const fadeRiseSm: Variants = {
-  hidden: { opacity: 0, y: 14 },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: EASE },
+    transition: { duration: 0.4, ease: EASE },
   },
 };
 
@@ -44,20 +44,20 @@ export const maskRise: Variants = {
   hidden: { y: "115%" },
   visible: {
     y: 0,
-    transition: { duration: 0.85, ease: EASE },
+    transition: { duration: 0.7, ease: EASE },
   },
 };
 
-/** Big-card entrance: rises and settles from 97% scale, Apple-style. */
+/** Big-card entrance: rises and settles from ~97% scale, Apple-style. */
 export const scaleIn: Variants = {
-  hidden: { opacity: 0, y: 44, scale: 0.97 },
+  hidden: { opacity: 0, y: 36, scale: 0.975 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.8, ease: EASE },
+    transition: { duration: 0.6, ease: EASE },
   },
 };
 
-/** Shared whileInView config: reveal once, shortly after entering the viewport. */
-export const VIEWPORT = { once: true, margin: "0px 0px -80px 0px" } as const;
+/** Shared whileInView config: reveal once, soon after entering the viewport. */
+export const VIEWPORT = { once: true, margin: "0px 0px -40px 0px" } as const;

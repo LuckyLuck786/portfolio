@@ -5,11 +5,15 @@ type Dot = { ox: number; oy: number; x: number; y: number; vx: number; vy: numbe
 
 const SPACING = 28;
 const REPEL_RADIUS = 130;
+const BASE_FILL = "#d6d2c6";
 
 /**
  * Hero backdrop: a canvas grid of dots that scatter away from the cursor
- * (flashing amber while displaced) and spring back home. Paints a single
- * static frame under prefers-reduced-motion; pauses while offscreen.
+ * (flashing amber while displaced) and spring back home.
+ *
+ * Perf notes: dots are drawn as tiny rects (much cheaper than arc paths),
+ * and the loop sleeps entirely once the grid settles and the cursor leaves —
+ * it wakes on the next pointer move. Static single frame under reduced motion.
  */
 export default function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -27,20 +31,22 @@ export default function ParticleField() {
     let height = 0;
     let raf = 0;
     let inView = true;
+    let running = false;
     const mouse = { x: -1e4, y: -1e4 };
 
     function render() {
       if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = BASE_FILL;
       for (const d of dots) {
-        const disp = Math.hypot(d.x - d.ox, d.y - d.oy);
-        ctx.fillStyle =
-          disp > 2
-            ? `rgba(245,166,35,${Math.min(0.25 + disp / 40, 0.9)})`
-            : "#d6d2c6";
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, 1.1, 0, Math.PI * 2);
-        ctx.fill();
+        const disp = Math.abs(d.x - d.ox) + Math.abs(d.y - d.oy);
+        if (disp > 2) {
+          ctx.fillStyle = `rgba(245,166,35,${Math.min(0.25 + disp / 40, 0.9)})`;
+          ctx.fillRect(d.x - 1.1, d.y - 1.1, 2.2, 2.2);
+          ctx.fillStyle = BASE_FILL;
+        } else {
+          ctx.fillRect(d.x - 1, d.y - 1, 2, 2);
+        }
       }
     }
 
@@ -61,6 +67,7 @@ export default function ParticleField() {
     }
 
     function step() {
+      let energy = 0;
       for (const d of dots) {
         const dx = d.x - mouse.x;
         const dy = d.y - mouse.y;
@@ -76,9 +83,23 @@ export default function ParticleField() {
         d.vy *= 0.85;
         d.x += d.vx;
         d.y += d.vy;
+        energy += Math.abs(d.vx) + Math.abs(d.vy);
       }
       render();
-      if (inView) raf = requestAnimationFrame(step);
+
+      /* Sleep once the cursor is away and the grid has settled. */
+      const idle = mouse.x < -9000 && energy < 0.5;
+      if (inView && !idle) {
+        raf = requestAnimationFrame(step);
+      } else {
+        running = false;
+      }
+    }
+
+    function wake() {
+      if (running || !inView) return;
+      running = true;
+      raf = requestAnimationFrame(step);
     }
 
     rebuild();
@@ -92,6 +113,7 @@ export default function ParticleField() {
       const rect = canvas.getBoundingClientRect();
       mouse.x = e.clientX - rect.left;
       mouse.y = e.clientY - rect.top;
+      wake();
     };
     const onLeave = () => {
       mouse.x = -1e4;
@@ -101,12 +123,11 @@ export default function ParticleField() {
     document.documentElement.addEventListener("pointerleave", onLeave);
 
     const observer = new IntersectionObserver(([entry]) => {
-      const wasInView = inView;
       inView = entry.isIntersecting;
-      if (inView && !wasInView) raf = requestAnimationFrame(step);
+      if (inView) wake();
     });
     observer.observe(canvas);
-    raf = requestAnimationFrame(step);
+    wake();
 
     return () => {
       window.removeEventListener("resize", rebuild);

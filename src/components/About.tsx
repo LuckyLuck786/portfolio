@@ -3,6 +3,7 @@ import type { MotionValue } from "motion/react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import Section from "./Section";
 import { scaleIn } from "../lib/motion";
+import { trackSpot } from "../lib/spotlight";
 
 const FACTS = [
   { label: "Location", value: "Bengaluru, India" },
@@ -81,7 +82,11 @@ function RevealParagraph() {
 export default function About() {
   return (
     <Section id="about" index="01" title="About">
-      <motion.div variants={scaleIn} className="tile grid gap-12 p-8 md:grid-cols-12 md:p-14">
+      <motion.div
+        variants={scaleIn}
+        onMouseMove={trackSpot}
+        className="spot tile grid gap-12 p-8 md:grid-cols-12 md:p-14"
+      >
         <div className="md:col-span-8">
           <RevealParagraph />
         </div>
