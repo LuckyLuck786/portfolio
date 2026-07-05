@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { PointerEvent, ReactNode } from "react";
 import {
   motion,
@@ -10,6 +11,8 @@ import {
 } from "motion/react";
 import { ArrowDown, ArrowUpRight, FileDown, Github, Linkedin, MapPin } from "lucide-react";
 import Magnetic from "./Magnetic";
+import ParticleField from "./ParticleField";
+import ScrambleText from "./ScrambleText";
 import { EASE, fadeRise, maskRise, stagger, staggerFast } from "../lib/motion";
 
 const HEADLINE = "I ship production-grade systems, not prototypes.";
@@ -26,22 +29,28 @@ const WORDS: ReactNode[] = [
   </span>,
 ];
 
+/** Ticks every 30s so the greeting clock stays honest. */
+function useClock() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(id);
+  }, []);
+  return now;
+}
+
 /**
- * Animated hero backdrop: faint dotted grid + warm amber glows with light
- * scroll parallax. Purely decorative; parallax is disabled under reduced motion.
+ * Hero backdrop: interactive particle grid + warm amber glows with light
+ * scroll parallax. Purely decorative; motion is gated for reduced motion.
  */
 function Backdrop() {
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
-  const gridY = useTransform(scrollY, [0, 800], [0, 90]);
   const glowY = useTransform(scrollY, [0, 800], [0, 160]);
 
   return (
     <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
-      <motion.div
-        style={reduce ? undefined : { y: gridY }}
-        className="absolute inset-0 [background-image:radial-gradient(circle,#d8d5ca_1px,transparent_1px)] [background-size:26px_26px] [mask-image:radial-gradient(ellipse_65%_60%_at_50%_38%,black_25%,transparent_78%)]"
-      />
+      <ParticleField />
       <motion.div
         style={reduce ? undefined : { y: glowY }}
         className="absolute left-1/2 top-[-16rem] h-[40rem] w-[64rem] -ml-[32rem] rounded-full bg-brand/15 blur-[140px]"
@@ -52,13 +61,26 @@ function Backdrop() {
   );
 }
 
-export default function Hero() {
+export default function Hero({ introDone }: { introDone: boolean }) {
   const reduce = useReducedMotion();
+  const now = useClock();
 
-  /* Apple-style: hero content gently recedes as you scroll past it. */
+  const hour = now.getHours();
+  const greeting =
+    hour < 5
+      ? "Hello, night owl"
+      : hour < 12
+        ? "Good morning"
+        : hour < 17
+          ? "Good afternoon"
+          : "Good evening";
+  const time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  /* Zoom-through exit: the hero scales toward the viewer and fades as you
+     scroll, like flying through the text into the page. */
   const { scrollY } = useScroll();
   const fade = useTransform(scrollY, [0, 480], [1, 0]);
-  const rise = useTransform(scrollY, [0, 480], [0, 60]);
+  const zoom = useTransform(scrollY, [0, 600], [1, 1.3]);
 
   /* Cursor spotlight — a warm pool of light that follows the pointer. */
   const mx = useMotionValue(-600);
@@ -90,20 +112,30 @@ export default function Hero() {
       )}
 
       <motion.div
-        style={reduce ? undefined : { opacity: fade, y: rise }}
+        style={reduce ? undefined : { opacity: fade, scale: zoom }}
         className="container-page pb-24 pt-28"
       >
-        <motion.div variants={stagger} initial="hidden" animate="visible">
-          {/* Eyebrow: location tag */}
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          animate={introDone ? "visible" : "hidden"}
+        >
+          {/* Eyebrow: live local-time greeting + location tag */}
           <motion.div
             variants={fadeRise}
-            className="flex items-center gap-1.5 font-mono text-[13px] text-mute"
+            className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[13px]"
           >
-            <MapPin size={13} strokeWidth={1.75} aria-hidden />
-            Bengaluru, India
+            <span className="uppercase tracking-[0.22em] text-accent">
+              {greeting} · {time}
+            </span>
+            <span aria-hidden className="h-px w-8 bg-line-strong" />
+            <span className="flex items-center gap-1.5 text-mute">
+              <MapPin size={13} strokeWidth={1.75} aria-hidden />
+              Bengaluru, India
+            </span>
           </motion.div>
 
-          {/* Name, large and marker-highlighted so it leads the page */}
+          {/* Name: decodes from glyphs, then gets a marker-highlight sweep */}
           <motion.p
             variants={fadeRise}
             className="mt-7 text-[2rem] font-bold tracking-[-0.02em] sm:text-4xl md:text-[2.75rem]"
@@ -113,11 +145,17 @@ export default function Hero() {
                 aria-hidden
                 style={{ originX: 0 }}
                 initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ delay: 1.1, duration: 0.7, ease: EASE }}
+                animate={introDone ? { scaleX: 1 } : { scaleX: 0 }}
+                transition={{ delay: 1.3, duration: 0.7, ease: EASE }}
                 className="absolute inset-x-0 bottom-[0.02em] top-[0.16em] -skew-x-6 rounded-sm bg-brand/30"
               />
-              <span className="relative">Shaik Luqman</span>
+              <ScrambleText
+                text="Shaik Luqman"
+                start={introDone}
+                delay={350}
+                duration={900}
+                className="relative"
+              />
             </span>
           </motion.p>
 
@@ -206,8 +244,8 @@ export default function Hero() {
       <motion.div
         aria-hidden
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.6, duration: 1 }}
+        animate={{ opacity: introDone ? 1 : 0 }}
+        transition={{ delay: introDone ? 1.6 : 0, duration: 1 }}
         className="absolute bottom-7 left-1/2 -ml-6"
       >
         <motion.div

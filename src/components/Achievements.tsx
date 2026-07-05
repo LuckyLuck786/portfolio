@@ -39,7 +39,7 @@ export default function Achievements() {
       <motion.div variants={stagger} className="grid gap-5 md:grid-cols-3">
         {ITEMS.map((item) => (
           <motion.div key={item.kicker} variants={scaleIn} className="h-full">
-            <Tilt className="tile h-full p-7 transition-shadow duration-300 hover:shadow-lift">
+            <Tilt className="spot tile h-full p-7 transition-shadow duration-300 hover:shadow-lift">
               <article>
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-paper text-accent">
                   <item.icon size={19} strokeWidth={1.75} aria-hidden />

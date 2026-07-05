@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { motion } from "motion/react";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, Github, Maximize2 } from "lucide-react";
 import { scaleIn, VIEWPORT } from "../lib/motion";
+import { trackSpot } from "../lib/spotlight";
 
 export type Project = {
   /** Mono index shown on the card, e.g. "01". */
@@ -23,7 +24,14 @@ export type Project = {
   art: ReactNode;
 };
 
-export default function ProjectCard({ project }: { project: Project }) {
+export default function ProjectCard({
+  project,
+  onOpen,
+}: {
+  project: Project;
+  /** Opens the quick-look overlay (whole card is clickable; links excluded). */
+  onOpen?: () => void;
+}) {
   const dark = project.dark ?? false;
 
   const s = dark
@@ -46,11 +54,19 @@ export default function ProjectCard({ project }: { project: Project }) {
 
   return (
     <motion.article
+      layoutId={`project-${project.title}`}
       variants={scaleIn}
       initial="hidden"
       whileInView="visible"
       viewport={VIEWPORT}
-      className={`relative overflow-hidden rounded-[2rem] border ${s.card}`}
+      data-cursor="view"
+      onMouseMove={trackSpot}
+      onClick={(e) => {
+        /* Whole card opens the quick look, except real links/buttons. */
+        if ((e.target as Element).closest("a, button")) return;
+        onOpen?.();
+      }}
+      className={`spot relative cursor-pointer overflow-hidden rounded-[2rem] border ${s.card}`}
     >
       {/* Warm glow bleeding into the dark card */}
       {dark && (
@@ -113,6 +129,16 @@ export default function ProjectCard({ project }: { project: Project }) {
                 <ExternalLink size={15} aria-hidden />
                 Live
               </a>
+            )}
+            {onOpen && (
+              <button
+                type="button"
+                onClick={onOpen}
+                className={`btn h-10 px-5 text-[13px] ${s.button}`}
+              >
+                <Maximize2 size={15} aria-hidden />
+                Quick look
+              </button>
             )}
           </div>
         </div>

@@ -75,7 +75,17 @@ npx vercel --prod  # production deploy
         ├── Section.tsx         # numbered shell + parallax ghost index + reveal
         ├── Marquee.tsx         # scroll-velocity outlined tech ticker
         ├── Tilt.tsx            # 3D tilt micro-interaction wrapper
-        └── Magnetic.tsx        # magnetic hover wrapper for buttons
+        ├── Magnetic.tsx        # magnetic hover wrapper for buttons
+        ├── SmoothScroll.tsx    # Lenis inertia scrolling + anchor easing
+        ├── Preloader.tsx       # typing intro curtain
+        ├── CustomCursor.tsx    # morphing dot + ring cursor (fine pointers)
+        ├── CommandPalette.tsx  # ⌘K / Ctrl+K command menu
+        ├── HudRail.tsx         # fixed section counter + dot shortcuts
+        ├── ParticleField.tsx   # interactive hero dot grid (canvas)
+        ├── ScrambleText.tsx    # terminal-style text decode
+        ├── ProjectQuickLook.tsx# full-screen case overlay (layoutId morph)
+        ├── Now.tsx             # slim status strip (personalize the items!)
+        └── Grain.tsx           # film-grain + vignette finish
 ```
 
 ## Design tokens

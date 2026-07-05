@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import type { MotionValue } from "motion/react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import Section from "./Section";
+import ProjectQuickLook from "./ProjectQuickLook";
 import ProjectCard from "./ProjectCard";
 import type { Project } from "./ProjectCard";
 import { EASE } from "../lib/motion";
@@ -206,7 +206,7 @@ const PROJECTS: Project[] = [
   },
 ];
 
-/** Tracks the lg breakpoint so card stacking only engages on desktop. */
+/** Tracks the lg breakpoint so the horizontal deck only engages on desktop. */
 function useDesktop() {
   const [desktop, setDesktop] = useState(false);
   useEffect(() => {
@@ -219,68 +219,98 @@ function useDesktop() {
   return desktop;
 }
 
-function StackItem({
-  project,
-  i,
-  total,
-  progress,
-  enabled,
+/** Horizontal gap between slides — must match the track's gap-8. */
+const DECK_GAP = 32;
+
+/**
+ * Apple-style horizontal gallery: the deck pins below the nav and cards
+ * travel sideways as the visitor scrolls vertically, with an amber progress
+ * hairline underneath. Falls back to a plain vertical stack on mobile and
+ * under reduced motion.
+ */
+function HorizontalDeck({
+  projects,
+  onOpen,
 }: {
-  project: Project;
-  i: number;
-  total: number;
-  progress: MotionValue<number>;
-  enabled: boolean;
+  projects: Project[];
+  onOpen: (project: Project) => void;
 }) {
-  /* Earlier cards settle slightly smaller as the next card slides over them. */
-  const targetScale = 1 - (total - 1 - i) * 0.05;
-  const scale = useTransform(progress, [i / total, 1], [1, targetScale]);
-
-  return (
-    <div className="lg:sticky" style={{ top: `calc(6rem + ${i * 26}px)` }}>
-      <motion.div style={enabled ? { scale } : undefined} className="origin-top">
-        <ProjectCard project={project} />
-      </motion.div>
-    </div>
-  );
-}
-
-/** Apple-style deck: each card pins below the nav while the next covers it. */
-function CardStack({ projects }: { projects: Project[] }) {
-  const listRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const holderRef = useRef<HTMLDivElement>(null);
   const desktop = useDesktop();
   const reduce = useReducedMotion();
+  const [slideWidth, setSlideWidth] = useState(0);
+
+  const horizontal = desktop && !reduce;
+  /* Every slide is exactly one holder wide, so the total sideways travel
+     is a clean (slide + gap) per extra card. */
+  const shift = slideWidth > 0 ? (slideWidth + DECK_GAP) * (projects.length - 1) : 0;
 
   const { scrollYProgress } = useScroll({
-    target: listRef,
+    target: containerRef,
     offset: ["start start", "end end"],
   });
+  const x = useTransform(scrollYProgress, [0, 1], [0, -shift]);
+
+  useLayoutEffect(() => {
+    if (!horizontal) return;
+    const measure = () => setSlideWidth(holderRef.current?.clientWidth ?? 0);
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [horizontal]);
+
+  if (!horizontal) {
+    return (
+      <div ref={containerRef} className="flex flex-col gap-8">
+        {projects.map((project) => (
+          <ProjectCard key={project.title} project={project} onOpen={() => onOpen(project)} />
+        ))}
+      </div>
+    );
+  }
 
   return (
-    <div ref={listRef} className="flex flex-col gap-8">
-      {projects.map((project, i) => (
-        <StackItem
-          key={project.title}
-          project={project}
-          i={i}
-          total={projects.length}
-          progress={scrollYProgress}
-          enabled={desktop && !reduce}
-        />
-      ))}
+    <div ref={containerRef} className="relative h-[240vh]">
+      <div className="sticky top-24">
+        <div ref={holderRef} className="overflow-hidden">
+          <motion.div style={{ x }} className="flex w-max gap-8">
+            {projects.map((project) => (
+              <div
+                key={project.title}
+                className="shrink-0"
+                style={slideWidth ? { width: slideWidth } : undefined}
+              >
+                <ProjectCard project={project} onOpen={() => onOpen(project)} />
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Deck progress hairline */}
+        <div className="relative mt-6 h-px overflow-hidden bg-line">
+          <motion.div
+            style={{ scaleX: scrollYProgress }}
+            className="absolute inset-0 origin-left bg-brand"
+          />
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function Projects() {
+  const [selected, setSelected] = useState<Project | null>(null);
+
   return (
     <Section
       id="projects"
       index="03"
       title="Projects"
-      sub="Selected work — designed, built, and deployed end to end."
+      sub="Selected work — designed, built, and deployed end to end. Click a card for a closer look."
     >
-      <CardStack projects={PROJECTS} />
+      <HorizontalDeck projects={PROJECTS} onOpen={setSelected} />
+      <ProjectQuickLook project={selected} onClose={() => setSelected(null)} />
     </Section>
   );
 }

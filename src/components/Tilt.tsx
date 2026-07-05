@@ -1,5 +1,6 @@
 import type { PointerEvent, ReactNode } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
+import { trackSpot } from "../lib/spotlight";
 
 type TiltProps = {
   children: ReactNode;
@@ -21,6 +22,8 @@ export default function Tilt({ children, max = 7, className }: TiltProps) {
   const springRy = useSpring(ry, { stiffness: 220, damping: 18 });
 
   function onPointerMove(e: PointerEvent<HTMLDivElement>) {
+    /* Feed the .spot border glow even when tilt itself is disabled. */
+    trackSpot(e);
     if (reduce) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const px = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);

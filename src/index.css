@@ -95,4 +95,43 @@
   .tile {
     @apply rounded-3xl border border-line bg-card shadow-card;
   }
+
+  /* Amber border glow that follows the pointer — pair with trackSpot(). */
+  .spot {
+    position: relative;
+  }
+
+  .spot::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(
+      240px circle at var(--spot-x, -999px) var(--spot-y, -999px),
+      rgb(245 166 35 / 0.9),
+      transparent 65%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.35s;
+  }
+
+  .spot:hover::after {
+    opacity: 1;
+  }
+}
+
+/* When the custom cursor is mounted, hide the native one everywhere. */
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none !important;
 }

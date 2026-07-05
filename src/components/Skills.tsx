@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { Blocks, BrainCircuit, Code2, Database, Server, ShieldCheck } from "lucide-react";
 import Section from "./Section";
 import { scaleIn, stagger } from "../lib/motion";
+import { trackSpot } from "../lib/spotlight";
 
 type Variant = "light" | "dark" | "brand";
 
@@ -94,7 +95,8 @@ export default function Skills() {
           <motion.div
             key={group.label}
             variants={scaleIn}
-            className={`${TILE[group.variant]} ${group.span} p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-lift`}
+            onMouseMove={trackSpot}
+            className={`spot ${TILE[group.variant]} ${group.span} p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-lift`}
           >
             {/* Soft amber glow inside the dark hero tile */}
             {group.variant === "dark" && (

@@ -96,6 +96,16 @@ export default function Nav() {
             );
           })}
           <li>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event("cmdk:open"))}
+              aria-label="Open command menu"
+              className="inline-flex h-9 items-center gap-1 rounded-full border border-line-strong bg-card/70 px-3 font-mono text-[12px] text-mute transition-colors hover:border-brand hover:text-ink"
+            >
+              {typeof navigator !== "undefined" && /Mac/i.test(navigator.platform) ? "⌘" : "Ctrl"} K
+            </button>
+          </li>
+          <li>
             <a
               href="/resume.pdf"
               target="_blank"
