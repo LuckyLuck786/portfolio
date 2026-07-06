@@ -13,15 +13,15 @@ const FACTS = [
 
 /* The statement, split into segments so key phrases stay emphasized. */
 const SEGMENTS: { text: string; strong?: boolean }[] = [
-  { text: "I’m a Computer Science student and full-stack developer who ships" },
-  { text: "production-grade systems", strong: true },
-  { text: "across React, Node.js, Django, and MySQL. My work spans" },
-  { text: "applied AI", strong: true },
-  { text: "— RAG pipelines, multi-model LLM orchestration, and reinforcement learning — with a strong grounding in" },
-  { text: "secure engineering", strong: true },
-  { text: "(JWT/RBAC) and self-hosted Linux infrastructure. I’m driven by" },
-  { text: "end-to-end ownership", strong: true },
-  { text: ": designing, building, and deploying real projects." },
+  { text: "I’m a hands-on developer who loves turning ideas into" },
+  { text: "real, working products.", strong: true },
+  { text: "I care about" },
+  { text: "owning a problem end to end", strong: true },
+  { text: "— understanding it, building the solution, and shipping something people actually use," },
+  { text: "not just another prototype.", strong: true },
+  { text: "Curious and self-directed by nature, I’m" },
+  { text: "always learning", strong: true },
+  { text: "whatever the next project demands." },
 ];
 
 const WORDS = SEGMENTS.flatMap((segment) =>
