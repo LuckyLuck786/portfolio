@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, MotionConfig } from "motion/react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 
 import SmoothScroll, { getLenis } from "./components/SmoothScroll";
 import Preloader from "./components/Preloader";
@@ -68,6 +69,9 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AnimatePresence>
+
+      {/* Vercel Web Analytics — no-op locally, collects on Vercel deploys. */}
+      <Analytics />
     </MotionConfig>
   );
 }
