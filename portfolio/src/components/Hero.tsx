@@ -15,7 +15,7 @@ import ScrambleText from "./ScrambleText";
 import { openResume } from "./ResumeModal";
 import { EASE, fadeRise, maskRise, stagger, staggerFast } from "../lib/motion";
 
-const HEADLINE = "I ship production-grade systems, not prototypes.";
+const HEADLINE = "I Build Things Still learning how to build them right.";
 
 /* Headline words — the last two are toned down, the period carries the brand. */
 const WORDS: ReactNode[] = [
