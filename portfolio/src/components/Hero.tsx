@@ -21,7 +21,7 @@ const HEADLINE = "I ship production-grade systems, not prototypes.";
 const WORDS: ReactNode[] = [
   "I",
   "Build",
-  "Things.",
+  "Things",
   <span className="text-dim">Still learning how to</span>,
   <span className="text-dim">
     build them right.<span className="text-brand">.</span>
