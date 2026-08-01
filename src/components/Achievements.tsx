@@ -20,12 +20,6 @@ const ITEMS: Achievement[] = [
     body: "Authored a paper on the SafeCity Connect civic-safety architecture.",
   },
   {
-    icon: Trophy,
-    kicker: "Hackathons",
-    title: "Orchestrate · HACKSPARK · HackAgentAIx",
-    body: "HackerRank Orchestrate, Aurora Tech Fest Hackathon- HACKSPARK and HackAgentAIx (University of Essex).",
-  },
-  {
     icon: Flag,
     kicker: "CTF / Security",
     title: "Antraveda – Capture The Flag (CTF)",

@@ -179,8 +179,7 @@ export default function Hero({ introDone }: { introDone: boolean }) {
           </motion.h1>
 
           <motion.p variants={fadeRise} className="mt-8 max-w-xl text-lg leading-relaxed text-mute">
-            Full-stack engineer building applied-AI systems, secure infrastructure, and real
-            products.
+            Creating web experiences that are clean, intuitive, and built to last.
           </motion.p>
 
           {/* CTAs + socials */}
