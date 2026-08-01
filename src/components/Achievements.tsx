@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import type { LucideIcon } from "lucide-react";
-import { Flag, ScrollText, Trophy } from "lucide-react";
+import { Flag, ScrollText } from "lucide-react";
 import Section from "./Section";
 import Tilt from "./Tilt";
 import { scaleIn, stagger } from "../lib/motion";
