@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import type { LucideIcon } from "lucide-react";
-import { Flag, ScrollText } from "lucide-react";
+import { Flag, ScrollText, Trophy } from "lucide-react";
 import Section from "./Section";
 import Tilt from "./Tilt";
 import { scaleIn, stagger } from "../lib/motion";
@@ -22,7 +22,7 @@ const ITEMS: Achievement[] = [
   {
     icon: Trophy,
     kicker: "Hackathons",
-    title: "Orchestrate · HACKSPARK · ",
+    title: "Orchestrate · HACKSPARK ",
     body: "HackerRank Orchestrate, Aurora Tech Fest Hackathon- HACKSPARK .",
   },
   {
