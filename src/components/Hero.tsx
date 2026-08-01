@@ -24,7 +24,7 @@ const WORDS: ReactNode[] = [
   "Things",
   <span className="text-dim">Still learning how to</span>,
   <span className="text-dim">
-    build them right.<span className="text-brand">.</span>
+    build them right<span className="text-brand">.</span>
   </span>,
 ];
 
