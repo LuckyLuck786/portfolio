@@ -24,7 +24,8 @@ export default function Tilt({ children, max = 7, className }: TiltProps) {
   function onPointerMove(e: PointerEvent<HTMLDivElement>) {
     /* Feed the .spot border glow even when tilt itself is disabled. */
     trackSpot(e);
-    if (reduce) return;
+    /* Mouse only — a touch drag is a scroll gesture, not a tilt. */
+    if (reduce || e.pointerType !== "mouse") return;
     const rect = e.currentTarget.getBoundingClientRect();
     const px = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
     const py = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);

@@ -10,11 +10,14 @@ type ScrambleTextProps = {
   delay?: number;
   duration?: number;
   className?: string;
+  /** Include screen-reader text; turn off when a parent already provides it. */
+  announce?: boolean;
 };
 
 /**
  * Terminal-style decode: characters cycle through random glyphs and resolve
  * left to right. Width is reserved with an invisible copy so nothing shifts.
+ * Screen readers get the real text once; the glyph noise is hidden from them.
  * Renders the plain text instantly under prefers-reduced-motion.
  */
 export default function ScrambleText({
@@ -23,6 +26,7 @@ export default function ScrambleText({
   delay = 0,
   duration = 900,
   className,
+  announce = true,
 }: ScrambleTextProps) {
   const reduce = useReducedMotion();
   const [display, setDisplay] = useState("");
@@ -61,7 +65,8 @@ export default function ScrambleText({
   }, [start, reduce, text, delay, duration]);
 
   return (
-    <span className={`relative inline-block ${className ?? ""}`} aria-label={text}>
+    <span className={`relative inline-block ${className ?? ""}`}>
+      {announce && <span className="sr-only">{text}</span>}
       <span className="invisible" aria-hidden>
         {text}
       </span>

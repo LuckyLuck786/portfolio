@@ -15,6 +15,8 @@ import {
   Search,
 } from "lucide-react";
 import { EASE } from "../lib/motion";
+import { EMAIL, openEmail } from "../lib/contact";
+import { useFocusTrap } from "../lib/useFocusTrap";
 import { lenisStart, lenisStop, scrollToId } from "./SmoothScroll";
 import { openResume } from "./ResumeModal";
 
@@ -60,7 +62,7 @@ const ACTIONS: Action[] = [
     hint: "Gmail",
     icon: Mail,
     keywords: "gmail compose contact",
-    run: () => window.open("https://mail.google.com/mail/?view=cm&fs=1&to=shaik.luqman28@gmail.com", "_blank", "noopener"),
+    run: openEmail,
   },
   {
     id: "copy-email",
@@ -68,7 +70,10 @@ const ACTIONS: Action[] = [
     hint: "Copy",
     icon: Copy,
     keywords: "clipboard gmail",
-    run: () => void navigator.clipboard.writeText("shaik.luqman28@gmail.com"),
+    run: () => {
+      /* Clipboard can be unavailable (permissions / insecure context). */
+      navigator.clipboard?.writeText(EMAIL).catch(() => {});
+    },
   },
   {
     id: "github",
@@ -106,7 +111,9 @@ export default function CommandPalette() {
   const [query, setQuery] = useState("");
   const [activeIdx, setActiveIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  useFocusTrap(dialogRef, open);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -149,6 +156,13 @@ export default function CommandPalette() {
 
   useEffect(() => setActiveIdx(0), [query]);
 
+  const activeId = results[activeIdx] ? `cmdk-${results[activeIdx].id}` : undefined;
+
+  /* Keep the highlighted command visible while arrowing through the list. */
+  useEffect(() => {
+    if (activeId) document.getElementById(activeId)?.scrollIntoView({ block: "nearest" });
+  }, [activeId]);
+
   function runAction(action: Action) {
     setOpen(false);
     if (action.sectionId) {
@@ -180,7 +194,14 @@ export default function CommandPalette() {
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-[110]" role="dialog" aria-modal="true" aria-label="Command menu">
+        <div
+          ref={dialogRef}
+          data-lenis-prevent
+          className="fixed inset-0 z-[110]"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Command menu"
+        >
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -205,6 +226,11 @@ export default function CommandPalette() {
                 onKeyDown={onInputKeyDown}
                 placeholder="Type a command or search…"
                 aria-label="Search commands"
+                role="combobox"
+                aria-expanded="true"
+                aria-controls="cmdk-list"
+                aria-autocomplete="list"
+                aria-activedescendant={activeId}
                 className="h-14 w-full bg-transparent font-mono text-sm text-ink outline-none placeholder:text-dim"
               />
               <kbd className="shrink-0 rounded-md border border-line bg-paper px-1.5 py-0.5 font-mono text-[10px] text-dim">
@@ -212,32 +238,40 @@ export default function CommandPalette() {
               </kbd>
             </div>
 
-            <ul className="max-h-[320px] overflow-y-auto py-2">
-              {results.length === 0 && (
-                <li className="px-4 py-6 text-center font-mono text-sm text-dim">
-                  No matching commands
-                </li>
-              )}
+            {results.length === 0 && (
+              <p role="status" className="px-4 py-6 text-center font-mono text-sm text-dim">
+                No matching commands
+              </p>
+            )}
+            <ul
+              id="cmdk-list"
+              role="listbox"
+              aria-label="Commands"
+              className="max-h-[320px] overflow-y-auto py-2 empty:hidden"
+            >
               {results.map((action, i) => (
-                <li key={action.id}>
-                  <button
-                    type="button"
-                    onClick={() => runAction(action)}
-                    onMouseEnter={() => setActiveIdx(i)}
-                    className={`flex w-full items-center justify-between px-4 py-2.5 text-left text-sm transition-colors ${
-                      i === activeIdx ? "bg-paper text-ink" : "text-mute"
-                    }`}
-                  >
-                    <span className="flex items-center gap-3">
-                      <action.icon
-                        size={15}
-                        aria-hidden
-                        className={i === activeIdx ? "text-accent" : "text-dim"}
-                      />
-                      {action.label}
-                    </span>
-                    <span className="font-mono text-[11px] text-dim">{action.hint}</span>
-                  </button>
+                <li
+                  key={action.id}
+                  id={`cmdk-${action.id}`}
+                  role="option"
+                  aria-selected={i === activeIdx}
+                  onClick={() => runAction(action)}
+                  onMouseEnter={() => setActiveIdx(i)}
+                  className={`flex cursor-pointer items-center justify-between px-4 py-2.5 text-sm transition-colors ${
+                    i === activeIdx ? "bg-paper text-ink" : "text-mute"
+                  }`}
+                >
+                  <span className="flex items-center gap-3">
+                    <action.icon
+                      size={15}
+                      aria-hidden
+                      className={i === activeIdx ? "text-accent" : "text-dim"}
+                    />
+                    {action.label}
+                  </span>
+                  <span aria-hidden className="font-mono text-[11px] text-dim">
+                    {action.hint}
+                  </span>
                 </li>
               ))}
             </ul>

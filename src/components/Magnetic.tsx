@@ -23,7 +23,8 @@ export default function Magnetic({ children, strength = 0.25, className }: Magne
   const springY = useSpring(y, { stiffness: 260, damping: 18, mass: 0.6 });
 
   function onPointerMove(e: PointerEvent<HTMLDivElement>) {
-    if (reduce || !ref.current) return;
+    /* Mouse only — on touch, a tap would leave the button visibly displaced. */
+    if (reduce || !ref.current || e.pointerType !== "mouse") return;
     const rect = ref.current.getBoundingClientRect();
     x.set((e.clientX - (rect.left + rect.width / 2)) * strength);
     y.set((e.clientY - (rect.top + rect.height / 2)) * strength);

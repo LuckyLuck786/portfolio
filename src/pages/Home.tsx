@@ -13,9 +13,11 @@ import Now from "../components/Now";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
 import { scrollToId } from "../components/SmoothScroll";
+import { HOME_META, useDocumentMeta } from "../lib/seo";
 
 export default function Home({ introDone }: { introDone: boolean }) {
   const { hash } = useLocation();
+  useDocumentMeta(HOME_META);
 
   /* Deep links like /#projects (e.g. "All projects" from a case study):
      wait for the wipe curtain to lift, then glide to the section. */
@@ -30,7 +32,7 @@ export default function Home({ introDone }: { introDone: boolean }) {
       <Nav />
       <HudRail />
 
-      <main id="main">
+      <main id="main" tabIndex={-1}>
         <Hero introDone={introDone} />
         <Marquee />
         <About />

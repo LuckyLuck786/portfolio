@@ -14,6 +14,7 @@ export default function PageShell({ children }: { children: ReactNode }) {
       {/* Wipe curtain */}
       <motion.div
         aria-hidden
+        data-curtain
         variants={{
           initial: { y: 0 },
           enter: { y: "-100%", transition: { duration: 0.6, ease: EASE, delay: 0.05 } },

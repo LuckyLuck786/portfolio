@@ -101,12 +101,15 @@
      ::after paints the travelling border ring. */
   .spot {
     position: relative;
+    isolation: isolate;
   }
 
+  /* z-index -1 inside the isolated card: above its background, below its text. */
   .spot::before {
     content: "";
     pointer-events: none;
     position: absolute;
+    z-index: -1;
     inset: 0;
     border-radius: inherit;
     background: radial-gradient(
@@ -116,10 +119,6 @@
     );
     opacity: 0;
     transition: opacity 0.35s;
-  }
-
-  .spot:hover::before {
-    opacity: 1;
   }
 
   .spot::after {
@@ -146,9 +145,37 @@
     transition: opacity 0.35s;
   }
 
-  .spot:hover::after {
-    opacity: 1;
+  /* Hover-capable devices only — on touch, :hover sticks after a tap. */
+  @media (hover: hover) {
+    .spot:hover::before,
+    .spot:hover::after {
+      opacity: 1;
+    }
   }
+
+  /* Full-screen hero. svh excludes mobile browser toolbars, so the hero
+     doesn't jump when the address bar shows or hides; vh is the fallback. */
+  .min-h-hero {
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+}
+
+/* The prerendered HTML includes the intro curtain; hide it before JS runs
+   for anyone who won't see the intro (repeat visit, reduced motion). */
+html[data-intro-seen] [data-preloader] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-preloader] {
+    display: none;
+  }
+}
+
+/* Programmatic focus targets (sections, main) shouldn't draw a giant ring. */
+[tabindex="-1"]:focus {
+  outline: none;
 }
 
 /* When the custom cursor is mounted, hide the native one everywhere. */

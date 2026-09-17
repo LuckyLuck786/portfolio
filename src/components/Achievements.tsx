@@ -16,14 +16,14 @@ const ITEMS: Achievement[] = [
   {
     icon: ScrollText,
     kicker: "Publication",
-    title: "Research paper",
-    body: "Authored a paper on the SafeCity Connect civic-safety architecture.",
+    title: "IEEE conference paper (in preparation)",
+    body: "Co-authoring an IEEE conference paper on the SafeCity Connect civic-safety architecture.",
   },
   {
     icon: Trophy,
     kicker: "Hackathons",
-    title: "Orchestrate · HACKSPARK ",
-    body: "HackerRank Orchestrate, Aurora Tech Fest Hackathon- HACKSPARK .",
+    title: "Orchestrate · HACKSPARK",
+    body: "HackerRank Orchestrate and Aurora Tech Fest Hackathon — HACKSPARK.",
   },
   {
     icon: Flag,

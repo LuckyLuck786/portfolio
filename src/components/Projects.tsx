@@ -270,6 +270,9 @@ function useDesktop() {
 /** Horizontal gap between slides — must match the track's gap-8. */
 const DECK_GAP = 32;
 
+/** Vertical space the pinned deck needs besides the card: top-24 + progress bar. */
+const DECK_CHROME = 96 + 32;
+
 /**
  * Apple-style horizontal gallery: the deck pins below the nav and cards
  * travel sideways as the visitor scrolls vertically, with an amber progress
@@ -288,8 +291,9 @@ function HorizontalDeck({
   const desktop = useDesktop();
   const reduce = useReducedMotion();
   const [slideWidth, setSlideWidth] = useState(0);
+  const [fits, setFits] = useState(true);
 
-  const horizontal = desktop && !reduce;
+  const horizontal = desktop && !reduce && fits;
   /* Every slide is exactly one holder wide, so the total sideways travel
      is a clean (slide + gap) per extra card. */
   const shift = slideWidth > 0 ? (slideWidth + DECK_GAP) * (projects.length - 1) : 0;
@@ -307,6 +311,23 @@ function HorizontalDeck({
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, [horizontal]);
+
+  /* Pinning only works if the tallest card fits under the nav with the
+     progress bar; on short screens (e.g. 1366×768 laptops) the card bottom
+     would be cut off, so fall back to the vertical list. Cards are the same
+     width in both layouts, so the measurement is stable across the switch. */
+  useLayoutEffect(() => {
+    if (!desktop || reduce) return;
+    const measure = () => {
+      if (horizontal && slideWidth === 0) return;
+      const cards = containerRef.current?.querySelectorAll("article") ?? [];
+      const tallest = Math.max(0, ...Array.from(cards, (card) => card.offsetHeight));
+      setFits(tallest + DECK_CHROME <= window.innerHeight);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [desktop, reduce, horizontal, slideWidth]);
 
   if (!horizontal) {
     return (

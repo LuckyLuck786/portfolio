@@ -86,7 +86,7 @@ export default function ProjectCard({
       <div className="relative grid gap-10 p-8 md:p-12 lg:grid-cols-2 lg:items-center lg:gap-14">
         <div className={project.flip ? "lg:order-2" : undefined}>
           <p className="font-mono text-[13px]">
-            <span className="text-brand">{project.index}</span>
+            <span className={dark ? "text-brand" : "text-accent"}>{project.index}</span>
             <span className={`ml-3 uppercase tracking-[0.18em] ${s.kicker}`}>{project.kicker}</span>
           </p>
 

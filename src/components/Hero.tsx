@@ -8,29 +8,51 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import { ArrowDown, ArrowUpRight, FileDown, Github, Linkedin, MapPin } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUpRight,
+  FileDown,
+  Github,
+  GraduationCap,
+  Linkedin,
+  MapPin,
+} from "lucide-react";
 import Magnetic from "./Magnetic";
 import ParticleField from "./ParticleField";
 import ScrambleText from "./ScrambleText";
 import { openResume } from "./ResumeModal";
 import { EASE, fadeRise, maskRise, stagger, staggerFast } from "../lib/motion";
 
-const HEADLINE = "I Build Things Still learning how to build them right.";
+const NAME = "Shaik Luqman";
+/* Spoken/indexed form of the visual headline below. */
+const HEADLINE = "I Build Things. Still learning how to build them right.";
 
-/* Headline words — the last two are toned down, the period carries the brand. */
+/* Headline words, one mask each so the line wraps cleanly on phones — the
+   second phrase is toned down, the period carries the brand. */
+const DIM = (word: ReactNode) => <span className="text-dim">{word}</span>;
 const WORDS: ReactNode[] = [
   "I",
   "Build",
   "Things",
-  <span className="text-dim">Still learning how to</span>,
-  <span className="text-dim">
-    build them right<span className="text-brand">.</span>
-  </span>,
+  DIM("Still"),
+  DIM("learning"),
+  DIM("how"),
+  DIM("to"),
+  DIM("build"),
+  DIM("them"),
+  DIM(
+    <>
+      right<span className="text-brand">.</span>
+    </>,
+  ),
 ];
 
-/** Ticks every 30s so the greeting clock stays honest. */
+/**
+ * Ticks every 30s so the greeting clock stays honest. Null during the
+ * build-time prerender, so no stale build-machine time is baked into the HTML.
+ */
 function useClock() {
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState(() => (typeof window === "undefined" ? null : new Date()));
   useEffect(() => {
     const id = window.setInterval(() => setNow(new Date()), 30_000);
     return () => window.clearInterval(id);
@@ -64,7 +86,7 @@ export default function Hero({ introDone }: { introDone: boolean }) {
   const reduce = useReducedMotion();
   const now = useClock();
 
-  const hour = now.getHours();
+  const hour = now?.getHours() ?? 12;
   const greeting =
     hour < 5
       ? "Hello, night owl"
@@ -73,7 +95,7 @@ export default function Hero({ introDone }: { introDone: boolean }) {
         : hour < 17
           ? "Good afternoon"
           : "Good evening";
-  const time = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true });
+  const time = now?.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true });
 
   /* Zoom-through exit: the hero scales toward the viewer and fades as you
      scroll, like flying through the text into the page. */
@@ -99,7 +121,7 @@ export default function Hero({ introDone }: { introDone: boolean }) {
     <section
       id="top"
       onPointerMove={onPointerMove}
-      className="relative flex min-h-screen items-center"
+      className="min-h-hero relative flex items-center"
     >
       <Backdrop />
       {!reduce && (
@@ -125,61 +147,96 @@ export default function Hero({ introDone }: { introDone: boolean }) {
             variants={fadeRise}
             className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[13px]"
           >
-            <span className="uppercase tracking-[0.22em] text-accent">
-              {greeting} · {time}
-            </span>
-            <span aria-hidden className="h-px w-8 bg-line-strong" />
+            {time && (
+              <>
+                <span className="uppercase tracking-[0.22em] text-accent">
+                  {greeting} · {time}
+                </span>
+                <span aria-hidden className="h-px w-8 bg-line-strong" />
+              </>
+            )}
             <span className="flex items-center gap-1.5 text-mute">
               <MapPin size={13} strokeWidth={1.75} aria-hidden />
               Bengaluru, India
             </span>
           </motion.div>
 
-          {/* Name: decodes from glyphs, then gets a marker-highlight sweep */}
-          <motion.p
-            variants={fadeRise}
-            className="mt-7 text-[2rem] font-bold tracking-[-0.02em] sm:text-4xl md:text-[2.75rem]"
-          >
-            <span className="relative inline-block px-1.5">
-              <motion.span
-                aria-hidden
-                style={{ originX: 0 }}
-                initial={{ scaleX: 0 }}
-                animate={introDone ? { scaleX: 1 } : { scaleX: 0 }}
-                transition={{ delay: 1.3, duration: 0.7, ease: EASE }}
-                className="absolute inset-x-0 bottom-[0.02em] top-[0.16em] -skew-x-6 rounded-sm bg-brand/30"
-              />
-              <ScrambleText
-                text="Shaik Luqman"
-                start={introDone}
-                delay={350}
-                duration={900}
-                className="relative"
-              />
-            </span>
-          </motion.p>
+          {/* One h1 for name + headline: search engines and screen readers get
+              "Shaik Luqman — I Build Things…" as the page heading, while the
+              visual parts animate independently. */}
+          <h1 className="mt-7">
+            <span className="sr-only">{`${NAME} — ${HEADLINE}`}</span>
 
-          {/* Word-by-word masked headline reveal */}
-          <motion.h1
-            variants={staggerFast}
-            aria-label={HEADLINE}
-            className="mt-5 max-w-5xl text-[2.75rem] font-semibold leading-[1.04] tracking-[-0.035em] sm:text-6xl md:text-7xl lg:text-[5.25rem]"
-          >
-            {WORDS.map((word, i) => (
-              <span
-                key={i}
-                aria-hidden
-                className="-mb-[0.12em] inline-block overflow-hidden pb-[0.12em] align-bottom [&:not(:last-child)]:mr-[0.24em]"
-              >
-                <motion.span variants={maskRise} className="inline-block">
-                  {word}
-                </motion.span>
+            {/* Name: decodes from glyphs, then gets a marker-highlight sweep */}
+            <motion.span
+              variants={fadeRise}
+              aria-hidden
+              className="block text-[2rem] font-bold tracking-[-0.02em] sm:text-4xl md:text-[2.75rem]"
+            >
+              <span className="relative inline-block px-1.5">
+                <motion.span
+                  style={{ originX: 0 }}
+                  initial={{ scaleX: 0 }}
+                  animate={introDone ? { scaleX: 1 } : { scaleX: 0 }}
+                  transition={{ delay: 1.3, duration: 0.7, ease: EASE }}
+                  className="absolute inset-x-0 bottom-[0.02em] top-[0.16em] -skew-x-6 rounded-sm bg-brand/30"
+                />
+                <ScrambleText
+                  text={NAME}
+                  start={introDone}
+                  delay={350}
+                  duration={900}
+                  className="relative"
+                  announce={false}
+                />
               </span>
-            ))}
-          </motion.h1>
+            </motion.span>
+
+            {/* Word-by-word masked headline reveal */}
+            <motion.span
+              variants={staggerFast}
+              aria-hidden
+              className="mt-5 block max-w-5xl text-[2.75rem] font-semibold leading-[1.04] tracking-[-0.035em] sm:text-6xl md:text-7xl lg:text-[5.25rem]"
+            >
+              {WORDS.map((word, i) => (
+                <span
+                  key={i}
+                  className="-mb-[0.12em] inline-block overflow-hidden pb-[0.12em] align-bottom [&:not(:last-child)]:mr-[0.24em]"
+                >
+                  <motion.span variants={maskRise} className="inline-block">
+                    {word}
+                  </motion.span>
+                </span>
+              ))}
+            </motion.span>
+          </h1>
 
           <motion.p variants={fadeRise} className="mt-8 max-w-xl text-lg leading-relaxed text-mute">
-            Creating web experiences that are clean, intuitive, and built to last.
+            Full-stack developer crafting clean, intuitive web experiences —{" "}
+            <span className="text-ink">built to last</span>.
+          </motion.p>
+
+          {/* Education credential line */}
+          <motion.p
+            variants={fadeRise}
+            className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[13px] text-mute"
+          >
+            <GraduationCap size={15} strokeWidth={1.75} aria-hidden className="text-accent" />
+            <span>
+              CSE <span className="text-dim">@</span>{" "}
+              <abbr
+                title="Dayananda Sagar Academy of Technology and Management"
+                className="no-underline"
+              >
+                DSATM
+              </abbr>
+            </span>
+            <span aria-hidden className="text-line-strong">
+              /
+            </span>
+            <span>
+              BS Data Science <span className="text-dim">@</span> IIT Madras
+            </span>
           </motion.p>
 
           {/* CTAs + socials */}

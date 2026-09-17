@@ -1,8 +1,10 @@
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
-import { ExternalLink, Github, X } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Github, X } from "lucide-react";
 import type { Project } from "./ProjectCard";
 import { lenisStart, lenisStop } from "./SmoothScroll";
+import { useFocusTrap } from "../lib/useFocusTrap";
 
 /**
  * Full-screen case-file overlay. Shares a layoutId with the project card,
@@ -17,6 +19,8 @@ export default function ProjectQuickLook({
   onClose: () => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, project !== null);
 
   useEffect(() => {
     if (!project) return;
@@ -40,10 +44,12 @@ export default function ProjectQuickLook({
     <AnimatePresence>
       {project && (
         <div
+          ref={dialogRef}
+          data-lenis-prevent
           className="fixed inset-0 z-[105] overflow-y-auto"
           role="dialog"
           aria-modal="true"
-          aria-label={`${project.title} — case details`}
+          aria-labelledby="quick-look-title"
         >
           <motion.div
             initial={{ opacity: 0 }}
@@ -81,7 +87,7 @@ export default function ProjectQuickLook({
 
             <div className="p-8 md:p-12">
               <p className="font-mono text-[13px]">
-                <span className="text-brand">{project.index}</span>
+                <span className={dark ? "text-brand" : "text-accent"}>{project.index}</span>
                 <span
                   className={`ml-3 uppercase tracking-[0.18em] ${dark ? "text-white/50" : "text-dim"}`}
                 >
@@ -89,9 +95,12 @@ export default function ProjectQuickLook({
                 </span>
               </p>
 
-              <h3 className="mt-4 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
+              <h2
+                id="quick-look-title"
+                className="mt-4 text-3xl font-semibold tracking-[-0.02em] md:text-4xl"
+              >
                 {project.title}
-              </h3>
+              </h2>
               <p
                 className={`mt-4 max-w-2xl text-lg leading-relaxed ${
                   dark ? "text-[#a6a6af]" : "text-mute"
@@ -102,13 +111,13 @@ export default function ProjectQuickLook({
 
               <div className="mt-10 grid gap-10 md:grid-cols-5">
                 <div className="md:col-span-3">
-                  <h4
+                  <h3
                     className={`font-mono text-[11px] uppercase tracking-[0.22em] ${
                       dark ? "text-white/50" : "text-dim"
                     }`}
                   >
                     Highlights
-                  </h4>
+                  </h3>
                   <ul className="mt-4 space-y-3">
                     {project.bullets.map((bullet) => (
                       <li
@@ -128,13 +137,13 @@ export default function ProjectQuickLook({
                 </div>
 
                 <div className="md:col-span-2">
-                  <h4
+                  <h3
                     className={`font-mono text-[11px] uppercase tracking-[0.22em] ${
                       dark ? "text-white/50" : "text-dim"
                     }`}
                   >
                     Stack
-                  </h4>
+                  </h3>
                   <ul className="mt-4 flex flex-wrap gap-2">
                     {project.tags.map((tag) => (
                       <li
@@ -151,6 +160,13 @@ export default function ProjectQuickLook({
                   </ul>
 
                   <div className="mt-8 flex flex-wrap gap-3">
+                    <Link
+                      to={`/projects/${project.slug}`}
+                      className="btn btn-primary h-10 px-5 text-[13px]"
+                    >
+                      Full case study
+                      <ArrowUpRight size={15} aria-hidden />
+                    </Link>
                     <a
                       href={project.github}
                       target="_blank"

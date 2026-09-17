@@ -8,7 +8,21 @@ import { trackSpot } from "../lib/spotlight";
 const FACTS = [
   { label: "Location", value: "Bengaluru, India" },
   { label: "Focus", value: "Applied AI · Secure systems · Full-stack" },
-  { label: "Currently", value: "CS student & full-stack developer" },
+];
+
+const EDUCATION = [
+  {
+    degree: "Computer Science & Engineering",
+    school: "DSATM, Bengaluru",
+    schoolFull: "Dayananda Sagar Academy of Technology and Management",
+    mode: "On campus · Primary degree",
+  },
+  {
+    degree: "BS in Data Science & Applications",
+    school: "IIT Madras",
+    schoolFull: "Indian Institute of Technology Madras",
+    mode: "Online · Second degree",
+  },
 ];
 
 /* The statement, split into segments so key phrases stay emphasized. */
@@ -19,7 +33,11 @@ const SEGMENTS: { text: string; strong?: boolean }[] = [
   { text: "owning a problem end to end", strong: true },
   { text: "— understanding it, building the solution, and shipping something people actually use," },
   { text: "not just another prototype.", strong: true },
-  { text: "Curious and self-directed by nature, I’m" },
+  { text: "I’m earning two degrees in parallel:" },
+  { text: "Computer Science & Engineering at DSATM", strong: true },
+  { text: "on campus, and the" },
+  { text: "BS in Data Science & Applications from IIT Madras", strong: true },
+  { text: "online. Curious and self-directed by nature, I’m" },
   { text: "always learning", strong: true },
   { text: "whatever the next project demands." },
 ];
@@ -100,6 +118,28 @@ export default function About() {
               <p className="mt-1.5 text-sm font-medium text-ink">{fact.value}</p>
             </div>
           ))}
+
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-dim">
+              Education
+            </p>
+            <ul className="mt-2.5 space-y-4">
+              {EDUCATION.map((item) => (
+                <li key={item.school} className="flex gap-3">
+                  <span aria-hidden className="mt-[0.45em] h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
+                  <div>
+                    <p className="text-sm font-medium text-ink">{item.degree}</p>
+                    <p className="mt-0.5 text-sm text-mute">
+                      <abbr title={item.schoolFull} className="no-underline">
+                        {item.school}
+                      </abbr>
+                    </p>
+                    <p className="mt-0.5 font-mono text-[11px] text-dim">{item.mode}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </aside>
       </motion.div>
     </Section>

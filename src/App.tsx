@@ -4,7 +4,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 
 import SmoothScroll, { getLenis } from "./components/SmoothScroll";
-import Preloader from "./components/Preloader";
+import Preloader, { introSeen } from "./components/Preloader";
 import CustomCursor from "./components/CustomCursor";
 import CommandPalette from "./components/CommandPalette";
 import ResumeModal from "./components/ResumeModal";
@@ -24,8 +24,8 @@ function ScrollReset() {
 }
 
 export default function App() {
-  /* Hero entrance waits for the preloader curtain to lift. */
-  const [introDone, setIntroDone] = useState(false);
+  /* Hero entrance waits for the preloader curtain to lift (once per session). */
+  const [introDone, setIntroDone] = useState(introSeen);
   const location = useLocation();
 
   return (
@@ -48,7 +48,9 @@ export default function App() {
       <CommandPalette />
       <ResumeModal />
 
-      <AnimatePresence mode="wait">
+      {/* initial={false}: the first page shows immediately; the wipe only
+          plays on later route changes. */}
+      <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
           <Route
             path="/"

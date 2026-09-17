@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useReducedMotion } from "motion/react";
 import Lenis from "lenis";
+import "lenis/dist/lenis.css";
 
 /* Module-level handle so overlays (quick look, command palette) can pause
    scrolling, and so programmatic navigation shares the same easing. */
@@ -18,13 +19,20 @@ export function lenisStart() {
   lenis?.start();
 }
 
-/** Scrolls to an element by id — through Lenis when active, native otherwise. */
+/**
+ * Scrolls to an element by id — through Lenis when active, native otherwise —
+ * and moves keyboard focus there, so screen-reader and keyboard users land
+ * in the section they jumped to rather than staying on the link.
+ */
 export function scrollToId(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
   const offset = id === "top" ? 0 : -80;
   if (lenis) lenis.scrollTo(el, { offset });
   else el.scrollIntoView({ behavior: "smooth" });
+
+  if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+  el.focus({ preventScroll: true });
 }
 
 /**

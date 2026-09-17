@@ -6,11 +6,7 @@ import Magnetic from "./Magnetic";
 import { openResume } from "./ResumeModal";
 import { scaleIn } from "../lib/motion";
 import { trackSpot } from "../lib/spotlight";
-
-const EMAIL = "shaik.luqman28@gmail.com";
-/* Gmail compose opens reliably in any browser — mailto: silently no-ops when
-   the visitor has no desktop mail client configured. */
-const GMAIL_COMPOSE = `https://mail.google.com/mail/?view=cm&fs=1&to=${EMAIL}`;
+import { EMAIL, emailLinkProps } from "../lib/contact";
 
 export default function Contact() {
   const [copied, setCopied] = useState(false);
@@ -20,6 +16,7 @@ export default function Contact() {
 
   async function copyEmail() {
     try {
+      if (!navigator.clipboard) return;
       await navigator.clipboard.writeText(EMAIL);
       setCopied(true);
       window.clearTimeout(resetTimer.current);
@@ -34,7 +31,7 @@ export default function Contact() {
       <motion.div
         variants={scaleIn}
         onMouseMove={trackSpot}
-        className="spot relative overflow-hidden rounded-[2rem] bg-noir px-6 py-16 text-center text-paper md:px-16 md:py-24"
+        className="spot relative overflow-hidden rounded-[2rem] bg-noir px-4 py-16 text-center text-paper sm:px-6 md:px-16 md:py-24"
       >
         {/* Backdrop: faint grid + warm glow rising from the bottom */}
         <div aria-hidden className="absolute inset-0">
@@ -56,12 +53,10 @@ export default function Contact() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Magnetic>
               <a
-                href={GMAIL_COMPOSE}
-                target="_blank"
-                rel="noopener"
-                className="btn btn-primary h-12 px-7"
+                {...emailLinkProps()}
+                className="btn btn-primary h-12 px-5 text-[13px] sm:px-7 sm:text-sm"
               >
-                <Mail size={16} aria-hidden />
+                <Mail size={16} aria-hidden className="shrink-0" />
                 {EMAIL}
               </a>
             </Magnetic>

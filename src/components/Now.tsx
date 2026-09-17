@@ -26,7 +26,7 @@ export default function Now() {
           <span aria-hidden className="text-line-strong">
             ·
           </span>{" "}
-          CS coursework in Bengaluru
+          CSE at DSATM + BS Data Science at IIT Madras
           <span aria-hidden className="ml-1 animate-pulse text-brand">
             ▍
           </span>

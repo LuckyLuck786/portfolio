@@ -7,6 +7,7 @@ import type { Project } from "../components/ProjectCard";
 import Footer from "../components/Footer";
 import { openResume } from "../components/ResumeModal";
 import { EASE, fadeRise, fadeRiseSm, scaleIn, stagger, VIEWPORT } from "../lib/motion";
+import { HOME_META, projectMeta, useDocumentMeta } from "../lib/seo";
 
 /* ---------------------------------------------------------------------------
  * Stage-driven story artwork — the pinned visual builds up as the reader
@@ -258,12 +259,12 @@ function Chapter({
   return (
     <div ref={ref} className="flex min-h-[75vh] flex-col justify-center py-10">
       <p className="font-mono text-[13px]">
-        <span className="text-brand">{String(i + 1).padStart(2, "0")}</span>
+        <span className="text-accent">{String(i + 1).padStart(2, "0")}</span>
         <span className="ml-3 uppercase tracking-[0.18em] text-dim">{chapter.kicker}</span>
       </p>
-      <h3 className="mt-4 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
+      <h2 className="mt-4 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
         {chapter.title}
-      </h3>
+      </h2>
       <p className="mt-4 max-w-md text-lg leading-relaxed text-mute">{chapter.body}</p>
     </div>
   );
@@ -359,6 +360,7 @@ function FlowDiagram({ nodes }: { nodes: string[] }) {
 export default function CaseStudy() {
   const { slug } = useParams();
   const project = PROJECTS.find((p) => p.slug === slug);
+  useDocumentMeta(project ? projectMeta(project) : HOME_META);
 
   if (!project) return <Navigate to="/" replace />;
 
@@ -369,11 +371,11 @@ export default function CaseStudy() {
     <div id="top">
       <CaseNav />
 
-      <main className="pt-28 md:pt-36">
+      <main id="main" tabIndex={-1} className="pt-28 md:pt-36">
         {/* Title block */}
         <motion.div variants={stagger} initial="hidden" animate="visible" className="container-page">
           <motion.p variants={fadeRise} className="font-mono text-[13px]">
-            <span className="text-brand">{project.index}</span>
+            <span className="text-accent">{project.index}</span>
             <span className="ml-3 uppercase tracking-[0.18em] text-dim">{project.kicker}</span>
           </motion.p>
           <motion.h1
@@ -432,9 +434,9 @@ export default function CaseStudy() {
         {/* Stack */}
         <section className="container-page mt-16 md:mt-20" aria-label="Stack">
           <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={VIEWPORT}>
-            <motion.p variants={fadeRise} className="font-mono text-sm font-medium text-accent">
+            <motion.h2 variants={fadeRise} className="font-mono text-sm font-medium text-accent">
               Stack
-            </motion.p>
+            </motion.h2>
             <motion.ul variants={fadeRise} className="mt-5 flex flex-wrap gap-2">
               {project.tags.map((tag) => (
                 <li key={tag} className="chip">

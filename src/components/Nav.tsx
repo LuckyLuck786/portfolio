@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { EASE } from "../lib/motion";
@@ -49,6 +49,19 @@ export default function Nav() {
     return () => observer.disconnect();
   }, []);
 
+  /* Escape closes the mobile menu and hands focus back to its toggle. */
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      toggleRef.current?.focus();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   const solid = scrolled || open;
 
   return (
@@ -72,7 +85,7 @@ export default function Nav() {
         </a>
 
         {/* Desktop links */}
-        <ul className="hidden items-center gap-7 md:flex">
+        <ul className="hidden items-center gap-7 lg:flex">
           {LINKS.map((link) => {
             const isActive = active === link.href;
             return (
@@ -84,13 +97,7 @@ export default function Nav() {
                     isActive ? "text-ink" : "text-mute"
                   }`}
                 >
-                  <span
-                    className={`mr-1.5 transition-colors group-hover:text-accent ${
-                      isActive ? "text-accent" : "text-accent/70"
-                    }`}
-                  >
-                    {link.index}
-                  </span>
+                  <span className="mr-1.5 text-accent">{link.index}</span>
                   {link.label}
                 </a>
               </li>
@@ -100,9 +107,9 @@ export default function Nav() {
             <button
               type="button"
               onClick={() => window.dispatchEvent(new Event("cmdk:open"))}
-              aria-label="Open command menu"
               className="inline-flex h-9 items-center gap-1 rounded-full border border-line-strong bg-card/70 px-3 font-mono text-[12px] text-mute transition-colors hover:border-brand hover:text-ink"
             >
+              <span className="sr-only">Open command menu,</span>
               {typeof navigator !== "undefined" && /Mac/i.test(navigator.platform) ? "⌘" : "Ctrl"} K
             </button>
           </li>
@@ -119,12 +126,13 @@ export default function Nav() {
 
         {/* Mobile hamburger */}
         <button
+          ref={toggleRef}
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? "Close menu" : "Open menu"}
-          className="-mr-2 rounded-md p-2 text-mute transition-colors hover:text-ink md:hidden"
+          className="-mr-2 rounded-md p-2 text-mute transition-colors hover:text-ink lg:hidden"
         >
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -139,7 +147,7 @@ export default function Nav() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: EASE }}
-            className="overflow-hidden border-t border-line md:hidden"
+            className="overflow-hidden border-t border-line lg:hidden"
           >
             <ul className="container-page flex flex-col py-4">
               {LINKS.map((link) => (
@@ -152,7 +160,7 @@ export default function Nav() {
                       active === link.href ? "text-ink" : "text-mute"
                     }`}
                   >
-                    <span className="text-accent/80">{link.index}</span>
+                    <span className="text-accent">{link.index}</span>
                     {link.label}
                   </a>
                 </li>
@@ -166,7 +174,7 @@ export default function Nav() {
                   }}
                   className="flex w-full items-center gap-3 py-3 font-mono text-sm text-mute transition-colors hover:text-ink"
                 >
-                  <span className="text-accent/80">↗</span>
+                  <span className="text-accent">↗</span>
                   Résumé
                 </button>
               </li>

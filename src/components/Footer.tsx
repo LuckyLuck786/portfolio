@@ -1,15 +1,11 @@
 import { ArrowUp, FileDown, Github, Linkedin, Mail } from "lucide-react";
 import Signature from "./Signature";
 import { openResume } from "./ResumeModal";
+import { emailLinkProps } from "../lib/contact";
 
 const SOCIALS = [
   { label: "GitHub", href: "https://github.com/LuckyLuck786", Icon: Github },
   { label: "LinkedIn", href: "https://linkedin.com/in/luqman-shaik", Icon: Linkedin },
-  {
-    label: "Email",
-    href: "https://mail.google.com/mail/?view=cm&fs=1&to=shaik.luqman28@gmail.com",
-    Icon: Mail,
-  },
 ];
 
 export default function Footer() {
@@ -39,6 +35,13 @@ export default function Footer() {
                 <Icon size={17} strokeWidth={1.75} />
               </a>
             ))}
+            <a
+              {...emailLinkProps()}
+              aria-label="Email"
+              className="p-2 text-dim transition-colors hover:text-accent"
+            >
+              <Mail size={17} strokeWidth={1.75} />
+            </a>
             <button
               type="button"
               onClick={openResume}

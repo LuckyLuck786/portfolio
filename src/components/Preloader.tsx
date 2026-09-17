@@ -3,11 +3,24 @@ import { motion, useReducedMotion } from "motion/react";
 import { EASE } from "../lib/motion";
 
 const NAME = "shaik.luqman_";
-const TYPE_MS = 70;
+const TYPE_MS = 45;
+const HOLD_MS = 300;
+const EXIT_MS = 700;
+const SEEN_KEY = "intro-seen";
+
+/** Whether this browser session has already watched the intro. */
+export function introSeen() {
+  try {
+    return typeof window !== "undefined" && sessionStorage.getItem(SEEN_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Intro overture: the name types out in mono on a dark curtain, which then
- * lifts to reveal the hero. Skipped entirely under prefers-reduced-motion.
+ * lifts to reveal the hero. Plays once per browser session and is skipped
+ * entirely under prefers-reduced-motion.
  */
 export default function Preloader({ onDone }: { onDone: () => void }) {
   const reduce = useReducedMotion();
@@ -25,12 +38,17 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
       () => setTyped((t) => Math.min(t + 1, NAME.length)),
       TYPE_MS,
     );
-    const exitAt = NAME.length * TYPE_MS + 500;
+    const exitAt = NAME.length * TYPE_MS + HOLD_MS;
     const exitTimer = window.setTimeout(() => setExiting(true), exitAt);
     const doneTimer = window.setTimeout(() => {
       document.documentElement.style.overflow = "";
+      try {
+        sessionStorage.setItem(SEEN_KEY, "1");
+      } catch {
+        /* Storage blocked — the intro simply plays again next load. */
+      }
       onDone();
-    }, exitAt + 800);
+    }, exitAt + EXIT_MS);
 
     return () => {
       window.clearInterval(typer);
@@ -47,15 +65,16 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
   return (
     <motion.div
       aria-hidden
+      data-preloader
       animate={exiting ? { y: "-100%" } : { y: 0 }}
-      transition={{ duration: 0.8, ease: EASE }}
+      transition={{ duration: EXIT_MS / 1000, ease: EASE }}
       className="fixed inset-0 z-[130] flex items-center justify-center bg-noir"
     >
       <p className="font-mono text-2xl text-paper md:text-4xl">
         {NAME.slice(0, typed)}
         <span className="animate-pulse text-brand">▍</span>
       </p>
-      <p className="absolute bottom-8 font-mono text-[11px] uppercase tracking-[0.3em] text-white/40">
+      <p className="absolute bottom-8 font-mono text-[11px] uppercase tracking-[0.3em] text-white/60">
         Portfolio — Bengaluru
       </p>
     </motion.div>

@@ -2,10 +2,20 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Download, ExternalLink, X } from "lucide-react";
 import { EASE } from "../lib/motion";
+import { isTouchDevice } from "../lib/device";
+import { useFocusTrap } from "../lib/useFocusTrap";
 import { lenisStart, lenisStop } from "./SmoothScroll";
 
-/** Any résumé button anywhere calls this to open the inline viewer. */
+/**
+ * Any résumé button anywhere calls this. Desktop gets the inline viewer;
+ * phones and tablets open the PDF directly, since mobile browsers either
+ * don't render PDFs inside an iframe (Android) or show only page one (iOS).
+ */
 export function openResume() {
+  if (isTouchDevice()) {
+    window.open("/resume.pdf", "_blank", "noopener");
+    return;
+  }
   window.dispatchEvent(new Event("resume:open"));
 }
 
@@ -17,6 +27,8 @@ export function openResume() {
 export default function ResumeModal() {
   const [open, setOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, open);
 
   useEffect(() => {
     const onOpen = () => setOpen(true);
@@ -44,6 +56,8 @@ export default function ResumeModal() {
     <AnimatePresence>
       {open && (
         <div
+          ref={dialogRef}
+          data-lenis-prevent
           className="fixed inset-0 z-[108] flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"

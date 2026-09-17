@@ -78,7 +78,7 @@ const ICON_BOX: Record<Variant, string> = {
 const LABEL: Record<Variant, string> = {
   light: "text-dim",
   dark: "text-white/55",
-  brand: "text-[#5c4708]",
+  brand: "text-[#4a3a09]",
 };
 
 const CHIP: Record<Variant, string> = {

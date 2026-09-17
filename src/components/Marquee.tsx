@@ -2,6 +2,7 @@ import { useRef } from "react";
 import {
   motion,
   useAnimationFrame,
+  useInView,
   useMotionValue,
   useReducedMotion,
   useScroll,
@@ -66,8 +67,12 @@ export default function Marquee() {
 
   const direction = useRef(1);
 
+  /* Idle while scrolled out of view — no per-frame work for an unseen strip. */
+  const stripRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(stripRef);
+
   useAnimationFrame((_, delta) => {
-    if (reduce) return;
+    if (reduce || !inView) return;
     let moveBy = direction.current * BASE_VELOCITY * (delta / 1000);
 
     const vf = velocityFactor.get();
@@ -79,7 +84,11 @@ export default function Marquee() {
   });
 
   return (
-    <div aria-hidden className="select-none overflow-hidden border-y border-line py-5 md:py-6">
+    <div
+      ref={stripRef}
+      aria-hidden
+      className="select-none overflow-hidden border-y border-line py-5 md:py-6"
+    >
       <motion.div
         style={reduce ? undefined : { x }}
         className="flex whitespace-nowrap font-mono text-2xl font-semibold uppercase tracking-[0.16em] md:text-4xl"
